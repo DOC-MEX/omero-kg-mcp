@@ -56,6 +56,13 @@ OMERO_API_URL = os.getenv(
     #"https://omero.nfdi4bioimage.de/api/v0/m",
 )
 
+# Custom REST API providing simplified access to common
+# OMERO Knowledge Graph queries.
+REST_API_URL = os.getenv(
+    "REST_API_URL",
+    "http://127.0.0.1:8000",
+)
+
 # ---------------------------------------------------------------------------
 # MCP server
 # ---------------------------------------------------------------------------
@@ -191,8 +198,107 @@ async def get_omero_dataset(
 # Knowledge Graph / custom REST API tools
 # ---------------------------------------------------------------------------
 
-# Additionl custom REST API, GeoSPARQL queries, or federated
-# SPARQL queries rather than the native OMERO API.
+# These tools use the custom REST API rather than the native OMERO API.
+
+@mcp.tool()
+async def get_image_details(
+    image_id: int,
+) -> dict:
+    """
+    Retrieve Knowledge Graph metadata and context for an OMERO image.
+
+    Use this tool for semantic information about an image, including
+    its dataset, project, repository, geographic location, thumbnail,
+    and OMERO URL when available.
+
+    For technical image metadata such as dimensions, channels, pixel
+    information, and acquisition metadata, use
+    ``get_omero_image_metadata`` instead.
+
+    Args:
+        image_id: Numeric OMERO image identifier.
+
+    Returns:
+        Image metadata and hierarchical context obtained from the
+        OMERO Knowledge Graph.
+    """
+
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.get(
+            f"{REST_API_URL}/api/v1/images/{image_id}",
+        )
+
+        response.raise_for_status()
+
+        return response.json()
+
+
+@mcp.tool()
+async def find_images_near_location(
+    latitude: float,
+    longitude: float,
+    radius_km: float = 1.0,
+    limit: int = 20,
+) -> dict:
+    """
+    Find OMERO images near a geographic location.
+
+    Use this tool to search the OMERO Knowledge Graph for images
+    within a given radius of a latitude and longitude.
+
+    The geographic search is performed by the custom REST API using
+    GeoSPARQL queries against the Knowledge Graph.
+
+    Args:
+        latitude: Latitude of the search center in decimal degrees.
+        longitude: Longitude of the search center in decimal degrees.
+        radius_km: Search radius in kilometers.
+        limit: Maximum number of images to return.
+
+    Returns:
+        Matching OMERO images ordered by distance from the query point.
+    """
+
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.get(
+            f"{REST_API_URL}/api/v1/images/nearby",
+            params={
+                "lat": latitude,
+                "lon": longitude,
+                "radius_km": radius_km,
+                "limit": limit,
+            },
+        )
+
+        response.raise_for_status()
+
+        return response.json()
+
+
+@mcp.tool()
+async def get_geolocation_statistics() -> dict:
+    """
+    Retrieve repository-wide geolocation statistics.
+
+    Use this tool for questions about how many images in the repository
+    have geographic location information represented in the Knowledge
+    Graph.
+
+    An image is considered geolocated when the Knowledge Graph contains
+    a GeoSPARQL geometry with a WKT representation for that image.
+
+    Returns:
+        Number of images with geolocation data in the Knowledge Graph.
+    """
+
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.get(
+            f"{REST_API_URL}/api/v1/statistics/geolocation",
+        )
+
+        response.raise_for_status()
+
+        return response.json()
 
 
 # ---------------------------------------------------------------------------

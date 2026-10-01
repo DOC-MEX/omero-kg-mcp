@@ -4,14 +4,16 @@ Model Context Protocol (MCP) tools and a lightweight REST API for accessing OMER
 
 The project currently provides two complementary components:
 
-- an **MCP server** exposing selected operations from the native OMERO JSON API;
+- an **MCP server** exposing selected operations from both the native OMERO JSON API and the custom Knowledge Graph REST API;
 - a **custom REST API** providing simple access to common SPARQL and GeoSPARQL queries against an OMERO Knowledge Graph indexed with QLever.
 
 The REST API acts as an abstraction layer over the Knowledge Graph, allowing to perform common queries without constructing SPARQL directly.
 
 ## Current MCP tools
 
-The MCP server currently provides three tools:
+The MCP server currently provides six tools.
+
+### Native OMERO API tools
 
 - **`get_omero_image_metadata(image_id)`**  
   Retrieve native OMERO metadata for an image, including dimensions, pixel information, channels, and other available image metadata.
@@ -22,7 +24,18 @@ The MCP server currently provides three tools:
 - **`get_omero_repository_statistics()`**  
   Retrieve general repository statistics, including the number of images, datasets, projects, experimenters, and experimenter groups.
 
-These tools currently rely only on the native OMERO API.
+### Knowledge Graph tools
+
+- **`get_image_details(image_id)`**  
+  Retrieve semantic metadata and context for an image, including its dataset, project, repository, geographic location, thumbnail, and OMERO URL.
+
+- **`find_images_near_location(latitude, longitude, radius_km, limit)`**  
+  Find geolocated OMERO images near a geographic location.
+
+- **`get_geolocation_statistics()`**  
+  Retrieve the number of images with geographic location information in the Knowledge Graph.
+
+The first three tools access the native OMERO API directly. The Knowledge Graph tools access the custom REST API, which translates the requests into SPARQL or GeoSPARQL queries against QLever.
 
 ## Custom Knowledge Graph REST API
 
@@ -70,37 +83,11 @@ By default, the current example configuration assumes:
 QLever:     http://127.0.0.1:8888
 ```
 
-## Running the MCP server
-
-Start the MCP server from its directory with:
-
-```bash
-python server.py
-```
-
-By default, Uvicorn listens locally on:
-
-```text
-http://127.0.0.1:8001
-```
-
-and the Streamable HTTP MCP endpoint is:
-
-```text
-http://127.0.0.1:8001/mcp
-```
-
-This endpoint can be exposed through a reverse proxy such as Nginx.
-
-For example, the Evolomero deployment exposes the MCP endpoint at:
-
-```text
-https://evolomero.evolbio.mpg.de/mcp
-```
-
 ## Running the custom REST API
 
-Start the REST API from the directory containing `app.py`:
+The custom REST API provides access to the OMERO Knowledge Graph and should be running when using the Knowledge Graph MCP tools.
+
+Start the REST API from its directory with:
 
 ```bash
 uvicorn app:app --host 127.0.0.1 --port 8000
@@ -112,10 +99,40 @@ For development and testing, automatic reload can be enabled:
 uvicorn app:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-The REST API will then be available locally at:
+By default, the REST API is available locally at:
 
 ```text
 http://127.0.0.1:8000
+```
+
+The MCP server connects to this service using `REST_API_URL`.
+
+## Running the MCP server
+
+With the custom REST API running, start the MCP server from its directory with:
+
+```bash
+python server.py
+```
+
+By default, Uvicorn listens locally on:
+
+```text
+http://127.0.0.1:8001
+```
+
+The Streamable HTTP MCP endpoint is:
+
+```text
+http://127.0.0.1:8001/mcp
+```
+
+The MCP server accesses both the native OMERO API and the custom Knowledge Graph REST API.
+
+The MCP endpoint can be exposed through a reverse proxy such as Nginx. For example, the Evolomero deployment exposes it at:
+
+```text
+https://evolomero.evolbio.mpg.de/mcp
 ```
 
 ## Testing the native OMERO API

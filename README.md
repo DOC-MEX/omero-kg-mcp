@@ -1,13 +1,17 @@
 # omero-kg-mcp
 
+Model Context Protocol (MCP) tools and a lightweight REST API for accessing OMERO data and an OMERO Knowledge Graph.
 
-Model Context Protocol (MCP) tools for accessing OMERO data and, in later versions, OMERO Knowledge Graph services.
+The project currently provides two complementary components:
 
-The initial version provides a small MCP server that uses the **native OMERO JSON API**. It exposes common OMERO operations as MCP tools that can be used directly by MCP clients or by AI agents.
+- an **MCP server** exposing selected operations from the native OMERO JSON API;
+- a **custom REST API** providing simple access to common SPARQL and GeoSPARQL queries against an OMERO Knowledge Graph indexed with QLever.
+
+The REST API acts as an abstraction layer over the Knowledge Graph, allowing to perform common queries without constructing SPARQL directly.
 
 ## Current MCP tools
 
-The initial MCP server provides three tools:
+The MCP server currently provides three tools:
 
 - **`get_omero_image_metadata(image_id)`**  
   Retrieve native OMERO metadata for an image, including dimensions, pixel information, channels, and other available image metadata.
@@ -20,12 +24,36 @@ The initial MCP server provides three tools:
 
 These tools currently rely only on the native OMERO API.
 
+## Custom Knowledge Graph REST API
+
+The custom REST API provides simplified access to common queries against the OMERO Knowledge Graph.
+
+It currently provides three endpoints:
+
+- **`GET /api/v1/images/{image_id}`**  
+  Retrieve semantic metadata and hierarchical context for an image, including its dataset, project, repository, geographic location, thumbnail, and OMERO URL when available.
+
+- **`GET /api/v1/images/nearby`**  
+  Find geolocated OMERO images within a specified radius of a geographic coordinate using GeoSPARQL.
+
+- **`GET /api/v1/statistics/geolocation`**  
+  Return the number of images represented in the Knowledge Graph with geographic location information.
+
+The REST API translates these requests into SPARQL or GeoSPARQL queries and sends them to QLever.
+
 ## Requirements
 
-Python packages:
+Create and activate a Python virtual environment:
 
 ```bash
-pip install httpx uvicorn mcp
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Install the required packages:
+
+```bash
+pip install httpx uvicorn mcp fastapi
 ```
 
 The MCP server expects an OMERO JSON API endpoint of the form:
@@ -34,16 +62,17 @@ The MCP server expects an OMERO JSON API endpoint of the form:
 https://<omero-server>/api/v0/m
 ```
 
-By default, `server.py` uses the Evolomero server:
+The custom REST API requires access to a QLever endpoint containing the OMERO Knowledge Graph.
+
+By default, the current example configuration assumes:
 
 ```text
-https://evolomero.evolbio.mpg.de/api/v0/m
+QLever:     http://127.0.0.1:8888
 ```
-
 
 ## Running the MCP server
 
-Start the server with:
+Start the MCP server from its directory with:
 
 ```bash
 python server.py
@@ -69,9 +98,29 @@ For example, the Evolomero deployment exposes the MCP endpoint at:
 https://evolomero.evolbio.mpg.de/mcp
 ```
 
+## Running the custom REST API
+
+Start the REST API from the directory containing `app.py`:
+
+```bash
+uvicorn app:app --host 127.0.0.1 --port 8000
+```
+
+For development and testing, automatic reload can be enabled:
+
+```bash
+uvicorn app:app --host 127.0.0.1 --port 8000 --reload
+```
+
+The REST API will then be available locally at:
+
+```text
+http://127.0.0.1:8000
+```
+
 ## Testing the native OMERO API
 
-Before starting the MCP server, the native OMERO API can be tested directly with `curl`.
+The native OMERO API can be tested independently with `curl`.
 
 ### Image metadata
 
@@ -94,19 +143,53 @@ curl -s \
   | python -m json.tool
 ```
 
-The same approach can be used for the other resources:
+The same approach can be used for other resources:
 
 ```bash
 curl -s "https://evolomero.evolbio.mpg.de/api/v0/m/datasets/?limit=1"
 curl -s "https://evolomero.evolbio.mpg.de/api/v0/m/projects/?limit=1"
 curl -s "https://evolomero.evolbio.mpg.de/api/v0/m/experimenters/?limit=1"
+curl -s "https://evolomero.evolbio.mpg.de/api/v0/m/experimentergroups/?limit=1"
 ```
 
 The MCP tool `get_omero_repository_statistics()` performs these requests concurrently and returns the counts in a single result.
 
+## Testing the custom REST API
+
+With the REST API running on port `8000`, its endpoints can be tested independently.
+
+### Image details
+
+```bash
+curl -s \
+  "http://127.0.0.1:8000/api/v1/images/427" \
+  | python -m json.tool
+```
+
+### Nearby image search
+
+```bash
+curl -s -G \
+  "http://127.0.0.1:8000/api/v1/images/nearby" \
+  --data-urlencode "lat=51.48618" \
+  --data-urlencode "lon=7.04247" \
+  --data-urlencode "radius_km=1.0" \
+  --data-urlencode "limit=2" \
+  | python -m json.tool
+```
+
+### Geolocation statistics
+
+```bash
+curl -s \
+  "http://127.0.0.1:8000/api/v1/statistics/geolocation" \
+  | python -m json.tool
+```
+
+
 ## Testing the MCP server
 
-The included test client connects directly to the local MCP endpoint and:
+The included test client connects directly to the MCP endpoint and:
 
 1. initializes an MCP session;
 2. lists the available tools;
@@ -120,7 +203,7 @@ Run it while `server.py` is running:
 python test_mcp.py
 ```
 
-The server should expose:
+The server should currently expose:
 
 ```text
 get_omero_image_metadata

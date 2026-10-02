@@ -1,13 +1,16 @@
 # omero-kg-mcp
 
-Model Context Protocol (MCP) tools and a lightweight REST API for accessing OMERO data and an OMERO Knowledge Graph.
+Model Context Protocol (MCP) tools, a lightweight REST API, and a simple AI-assisted web interface for accessing OMERO data and an OMERO Knowledge Graph.
 
-The project currently provides two complementary components:
+The project currently provides three complementary components:
 
 - an **MCP server** exposing selected operations from both the native OMERO JSON API and the custom Knowledge Graph REST API;
-- a **custom REST API** providing simple access to common SPARQL and GeoSPARQL queries against an OMERO Knowledge Graph indexed with QLever.
+- a **custom REST API** providing simple access to common SPARQL and GeoSPARQL queries against an OMERO Knowledge Graph indexed with QLever;
+- a **lightweight web application** providing a natural-language interface to the MCP tools through an AI agent.
 
-The REST API acts as an abstraction layer over the Knowledge Graph, allowing to perform common queries without constructing SPARQL directly.
+The REST API acts as an abstraction layer over the Knowledge Graph, allowing common queries to be performed without constructing SPARQL directly.
+
+The web application connects an AI agent to one or more OMERO MCP servers. The agent can select and combine native OMERO and Knowledge Graph tools according to the user's question.
 
 ## Current MCP tools
 
@@ -66,7 +69,7 @@ source .venv/bin/activate
 Install the required packages:
 
 ```bash
-pip install httpx uvicorn mcp fastapi
+pip install httpx uvicorn mcp fastapi openai openai-agents jinja2 python-multipart
 ```
 
 The MCP server expects an OMERO JSON API endpoint of the form:
@@ -133,6 +136,61 @@ The MCP endpoint can be exposed through a reverse proxy such as Nginx. For examp
 
 ```text
 https://evolomero.evolbio.mpg.de/mcp
+```
+## Running the web application
+
+The lightweight web application provides a natural-language interface to the OMERO MCP tools.
+
+The application uses an AI agent to interpret a user's question, select the appropriate MCP server and tools, and combine the returned metadata into a concise answer.
+
+Before starting the application, make sure that the required API key is available:
+
+```bash
+export SAIA_API_KEY="..."
+```
+
+Start the web application from its directory with:
+
+```bash
+uvicorn app:app --host 127.0.0.1 --port 8002
+```
+
+The current application connects to two MCP servers:
+
+```text
+Evolomero:
+https://evolomero.evolbio.mpg.de/mcp
+
+NFDI4BIOIMAGE:
+https://omero.nfdi4bioimage.de/kg-mcp/mcp
+```
+
+The default model in the current configuration is:
+
+```text
+openai-gpt-oss-120b
+```
+
+## Architecture
+
+The three components form a simple layered architecture:
+
+```text
+                         Web application
+                              :8002
+                                |
+                           AI agent
+                                |
+                         MCP server(s)
+                              :8001
+                         /             \
+                        /               \
+              Native OMERO API      Custom REST API
+                                          :8000
+                                            |
+                                          QLever
+                                            |
+                                  OMERO Knowledge Graph
 ```
 
 ## Testing the native OMERO API
@@ -210,9 +268,8 @@ The included test client connects directly to the MCP endpoint and:
 
 1. initializes an MCP session;
 2. lists the available tools;
-3. calls `get_omero_repository_statistics`;
-4. calls `get_omero_image_metadata`;
-5. calls `get_omero_dataset`.
+3. Calls native OMERO tools.
+4. Calls custom REST API tools.
 
 Run it while `server.py` is running:
 
@@ -223,8 +280,13 @@ python test_mcp.py
 The server should currently expose:
 
 ```text
+Native OMERO API tools:
 get_omero_image_metadata
 get_omero_repository_statistics
 get_omero_dataset
-```
 
+Knowledge Graph REST API tools:
+get_image_details
+find_images_near_location
+get_geolocation_statistics
+```

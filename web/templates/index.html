@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI-OMERO</title>
+
+    <link rel="stylesheet"
+          href="/ai-omero/static/style.css">
+</head>
+
+<body>
+
+<main class="container">
+
+    <header>
+        <div class="eyebrow">OMERO Knowledge Graph</div>
+
+        <h1>AI-OMERO</h1>
+
+        <p class="subtitle">
+            Explore the OMERO repository using natural language.
+        </p>
+    </header>
+
+
+    <section class="query-card">
+
+        <form method="post">
+
+            <label for="question">
+                Ask a question
+            </label>
+
+            <textarea
+                id="question"
+                name="question"
+                rows="4"
+                maxlength="2000"
+                placeholder="e.g. Tell me about image 427"
+                required>{{ question }}</textarea>
+
+            <div class="form-footer">
+
+                <span class="hint">
+                    The assistant can search image metadata and geographic information.
+                </span>
+
+                <button type="submit">
+                    Ask AI-OMERO
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <section class="examples">
+
+        <span>Try asking:</span>
+
+        <div class="example-list">
+            <button type="button"
+                    onclick="setQuestion('Tell me about image 427')">
+                Image 427
+            </button>
+
+            <button type="button"
+                    onclick="setQuestion('Find the four closest images within 10 km of latitude 51.48618 and longitude 7.04247')">
+                Nearby images
+            </button>
+        </div>
+
+    </section>
+
+
+    {% if answer %}
+
+    <section class="answer-card">
+
+        <div class="answer-heading">
+            <span>AI-OMERO response</span>
+        </div>
+
+        <div class="answer">
+            {{ answer }}
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <footer>
+        Powered by OMERO · Knowledge Graph · MCP
+    </footer>
+
+</main>
+
+
+<script>
+function setQuestion(text) {
+    const box = document.getElementById("question");
+    box.value = text;
+    box.focus();
+}
+</script>
+
+</body>
+</html>

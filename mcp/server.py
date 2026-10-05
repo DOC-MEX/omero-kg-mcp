@@ -31,6 +31,7 @@ The MCP server uses Streamable HTTP transport.
 
 import asyncio
 import os
+import re
 
 import httpx
 import uvicorn
@@ -61,6 +62,12 @@ OMERO_API_URL = os.getenv(
 REST_API_URL = os.getenv(
     "REST_API_URL",
     "http://127.0.0.1:8000",
+)
+
+# Local QLever SPARQL endpoint for dynamic queries.
+QLEVER_URL = os.getenv(
+    "QLEVER_URL",
+    "http://127.0.0.1:8888",
 )
 
 # ---------------------------------------------------------------------------
@@ -300,6 +307,62 @@ async def get_geolocation_statistics() -> dict:
 
         return response.json()
 
+
+# ---------------------------------------------------------------------------
+# Dynamic Knowledge Graph query tool
+# ---------------------------------------------------------------------------
+
+@mcp.tool()
+async def query_knowledge_graph(
+    sparql: str,
+) -> dict:
+    """
+    Execute a read-only SPARQL SELECT query against the OMERO
+    Knowledge Graph.
+
+    Use this tool only when the user's question cannot be answered
+    by one of the specialized OMERO or Knowledge Graph tools.
+
+    Only SELECT queries are permitted.
+
+    Args:
+        sparql: A SPARQL SELECT query using the OMERO Knowledge
+                Graph schema.
+
+    Returns:
+        SPARQL query results returned by QLever.
+    """
+
+    query = sparql.strip()
+
+    if not query:
+        raise ValueError(
+            "SPARQL query must not be empty"
+        )
+
+    # Remove PREFIX declarations before checking the query form.
+    query_without_prefixes = re.sub(
+        r"(?im)^\s*PREFIX\s+[^\n]+\n?",
+        "",
+        query,
+    ).lstrip()
+
+    if not query_without_prefixes.upper().startswith("SELECT"):
+        raise ValueError(
+            "Only read-only SPARQL SELECT queries are allowed"
+        )
+
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.get(
+            QLEVER_URL,
+            params={
+                "query": query,
+            },
+        )
+
+        response.raise_for_status()
+
+        return response.json()
 
 # ---------------------------------------------------------------------------
 # MCP transport security

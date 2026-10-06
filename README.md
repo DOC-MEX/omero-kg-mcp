@@ -4,17 +4,21 @@ Model Context Protocol (MCP) tools, a lightweight REST API, and a simple AI-assi
 
 The project currently provides three complementary components:
 
-- an **MCP server** exposing selected operations from both the native OMERO JSON API and the custom Knowledge Graph REST API;
+- an **MCP server** exposing selected operations from both the native OMERO JSON API and the OMERO Knowledge Graph;
+
 - a **custom REST API** providing simple access to common SPARQL and GeoSPARQL queries against an OMERO Knowledge Graph indexed with QLever;
-- a **lightweight web application** providing a natural-language interface to the MCP tools through an AI agent.
+
+- a **lightweight web application** providing a natural-language interface to one or more OMERO repositories through an AI agent and MCP.
 
 The REST API acts as an abstraction layer over the Knowledge Graph, allowing common queries to be performed without constructing SPARQL directly.
 
-The web application connects an AI agent to one or more OMERO MCP servers. The agent can select and combine native OMERO and Knowledge Graph tools according to the user's question.
+For questions that are not covered by the predefined tools, the MCP server can also execute SPARQL `SELECT` queries directly against QLever.
+
+The web application connects an AI agent to one or more OMERO MCP servers. The agent can select and combine native OMERO tools, predefined Knowledge Graph tools, and dynamic SPARQL queries according to the user's question.
 
 ## Current MCP tools
 
-The MCP server currently provides six tools.
+The MCP server currently provides seven tools.
 
 ### Native OMERO API tools
 
@@ -38,7 +42,12 @@ The MCP server currently provides six tools.
 - **`get_geolocation_statistics()`**  
   Retrieve the number of images with geographic location information in the Knowledge Graph.
 
-The first three tools access the native OMERO API directly. The Knowledge Graph tools access the custom REST API, which translates the requests into SPARQL or GeoSPARQL queries against QLever.
+- **`query_knowledge_graph(sparql)`**  
+  Execute a SPARQL `SELECT` query directly against the OMERO Knowledge Graph in QLever. This provides access to Knowledge Graph queries that are not covered by the predefined REST API tools.
+
+The first three tools access the native OMERO API directly. The predefined Knowledge Graph tools access the custom REST API, which translates common operations into SPARQL or GeoSPARQL queries against QLever.
+
+The `query_knowledge_graph()` tool provides direct read-only SPARQL access to QLever for queries that are not covered by the predefined tools.
 
 ## Custom Knowledge Graph REST API
 
@@ -143,6 +152,8 @@ The lightweight web application provides a natural-language interface to the OME
 
 The application uses an AI agent to interpret a user's question, select the appropriate MCP server and tools, and combine the returned metadata into a concise answer.
 
+For common operations, the agent can use the predefined native OMERO and Knowledge Graph tools. For Knowledge Graph questions that are not covered by those tools, the agent can generate a SPARQL query and execute it through the repository's `query_knowledge_graph()` MCP tool.
+
 Before starting the application, make sure that the required API key is available:
 
 ```bash
@@ -183,14 +194,14 @@ The three components form a simple layered architecture:
                                 |
                          MCP server(s)
                               :8001
-                         /             \
-                        /               \
-              Native OMERO API      Custom REST API
-                                          :8000
-                                            |
-                                          QLever
-                                            |
-                                  OMERO Knowledge Graph
+                    /           |           \
+                   /            |            \
+          Native OMERO API   Custom REST API   Dynamic SPARQL
+                                  :8000              |
+                                    |                |
+                                    +------ QLever ---+
+                                             |
+                                   OMERO Knowledge Graph
 ```
 
 ## Testing the native OMERO API
@@ -266,10 +277,11 @@ curl -s \
 
 The included test client connects directly to the MCP endpoint and:
 
-1. initializes an MCP session;
-2. lists the available tools;
+1. Initializes an MCP session.
+2. Lists the available tools.
 3. Calls native OMERO tools.
 4. Calls custom REST API tools.
+5. Tests a dynamic SPARQL query.
 
 Run it while `server.py` is running:
 
@@ -289,4 +301,5 @@ Knowledge Graph REST API tools:
 get_image_details
 find_images_near_location
 get_geolocation_statistics
+query_knowledge_graph
 ```

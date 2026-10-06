@@ -230,7 +230,9 @@ SPARQL GENERATION RULES:
   relevant resource.
 - Do not infer biological meaning, locations, or classifications that
   are not explicitly represented in the graph.
-
+- Every generated SPARQL query must explicitly include all PREFIX
+  declarations required by that query.
+- Do not assume that QLever has predefined namespace prefixes.
 
 NAME FILTERING:
 

@@ -49,6 +49,27 @@ The first three tools access the native OMERO API directly. The predefined Knowl
 
 The `query_knowledge_graph()` tool provides direct read-only SPARQL access to QLever for queries that are not covered by the predefined tools.
 
+## Knowledge Graph schema
+
+The project includes a compact description of the OMERO Knowledge Graph schema:
+
+```text
+prompts/omero_kg_schema.txt
+```
+The schema describes the classes, properties, relationships, and prefixes that can be used when constructing SPARQL queries against the OMERO Knowledge Graph.
+
+It includes, among others, mappings for:
+
+- Images, Datasets, and Projects;
+- Experimenters and Experimenter Groups;
+- MapAnnotations;
+- Plates, Wells, and WellSamples;
+- Pixels, Channels, and ROIs;
+- OMERO servers;
+- GeoSPARQL geometries and WKT locations.
+
+The schema is used by the AI test client.
+
 ## Custom Knowledge Graph REST API
 
 The custom REST API provides simplified access to common queries against the OMERO Knowledge Graph.
@@ -103,12 +124,6 @@ Start the REST API from its directory with:
 
 ```bash
 uvicorn app:app --host 127.0.0.1 --port 8000
-```
-
-For development and testing, automatic reload can be enabled:
-
-```bash
-uvicorn app:app --host 127.0.0.1 --port 8000 --reload
 ```
 
 By default, the REST API is available locally at:
@@ -289,7 +304,7 @@ Run it while `server.py` is running:
 python test_mcp.py
 ```
 
-The server should currently expose:
+The script `test_mcp.py` tests the MCP server directly, without using an AI agent.
 
 ```text
 Native OMERO API tools:
@@ -303,3 +318,23 @@ find_images_near_location
 get_geolocation_statistics
 query_knowledge_graph
 ```
+## Testing the MCP server with an AI agent
+
+The script `test_AI.py` provides a test of the MCP server using an AI agent.
+
+Unlike `test_mcp.py`, which calls MCP tools directly with predefined arguments, `test_AI.py` starts from a natural-language question:
+
+```text
+Which geolocated images belong to the Duisburg dataset?
+Give me their image IDs and names.
+```
+
+The agent receives the Knowledge Graph schema from:
+
+```text
+prompts/omero_kg_schema.txt
+```
+
+The schema describes the classes, properties, relationships, and prefixes available in the OMERO Knowledge Graph. It provides the agent with the information required to construct SPARQL queries without assuming predicates or relationships that are not represented in the graph.
+
+The agent is instructed to prefer the predefined MCP tools when they can fully answer the question. When a question requires additional Knowledge Graph relationships, filtering, grouping, or aggregation, it can generate a SPARQL SELECT query from the supplied schema. The test can be configured to connect to either the Evolomero or NFDI4BIOIMAGE MCP server.

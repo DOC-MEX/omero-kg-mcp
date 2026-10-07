@@ -129,6 +129,48 @@ async def main():
             )
             print(result)
 
+            # ============================================================
+            # Dynamic SPARQL query
+            # ============================================================
+
+            print("\n7. Dynamic SPARQL query:")
+
+            sparql = """
+PREFIX core: <https://ld.openmicroscopy.org/core/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT
+    ?dataset_id
+    ?dataset_name
+    (COUNT(DISTINCT ?image) AS ?geolocated_images)
+WHERE {
+    ?dataset a core:Dataset ;
+             dc:identifier ?dataset_id ;
+             dcterms:hasPart ?image .
+
+    OPTIONAL {
+        ?dataset rdfs:label ?dataset_name .
+    }
+
+    ?image a core:Image ;
+           geo:hasGeometry/geo:asWKT ?wkt .
+}
+GROUP BY ?dataset_id ?dataset_name
+ORDER BY DESC(?geolocated_images)
+"""
+
+            result = await session.call_tool(
+                "query_knowledge_graph",
+                arguments={
+                    "sparql": sparql,
+                },
+            )
+
+            print(result)
+
 
 if __name__ == "__main__":
     asyncio.run(main())

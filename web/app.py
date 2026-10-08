@@ -3,6 +3,7 @@ from pathlib import Path
 
 import markdown
 import bleach
+import logging
 
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
@@ -19,6 +20,8 @@ from agents import (
     set_tracing_disabled,
 )
 from agents.mcp import MCPServerStreamableHttp
+
+logger = logging.getLogger("ai-omero")
 
 # ------------------------------------------------------------
 # Knowledge Graph schema
@@ -107,6 +110,7 @@ async def index(request: Request):
         context={
             "question": "",
             "answer": None,
+            "error": None,
         },
     )
 
@@ -118,204 +122,221 @@ async def ask(
 ):
     """Send a user question to the OMERO agent and display its answer."""
 
-    # Connect to both repository-specific MCP servers.
-    # The connections provide the tools that the agent can use to inspect
-    # native OMERO metadata and query the corresponding Knowledge Graphs.
-    async with MCPServerStreamableHttp(
-        name="Evolomero",
-        params={
-            "url": EVOLOMERO_MCP_URL,
-            "timeout": 30,
-        },
-        cache_tools_list=True,
-        client_session_timeout_seconds=30,
-    ) as evolomero_mcp, MCPServerStreamableHttp(
-        name="NFDI4BIOIMAGE",
-        params={
-            "url": NFDI4BIOIMAGE_MCP_URL,
-            "timeout": 30,
-        },
-        cache_tools_list=True,
-        client_session_timeout_seconds=30,
-    ) as nfdi4bioimage_mcp:
+    try:
+        # Connect to both repository-specific MCP servers.
+        async with MCPServerStreamableHttp(
+            name="Evolomero",
+            params={
+                "url": EVOLOMERO_MCP_URL,
+                "timeout": 30,
+            },
+            cache_tools_list=True,
+            client_session_timeout_seconds=30,
+        ) as evolomero_mcp, MCPServerStreamableHttp(
+            name="NFDI4BIOIMAGE",
+            params={
+                "url": NFDI4BIOIMAGE_MCP_URL,
+                "timeout": 30,
+            },
+            cache_tools_list=True,
+            client_session_timeout_seconds=30,
+        ) as nfdi4bioimage_mcp:
 
-        # Create an agent with access to the tools from both repositories.
-        agent = Agent(
-            name="OMERO KG Assistant",
-            model="openai-gpt-oss-120b",
+            agent = Agent(
+                name="OMERO KG Assistant",
+                model="openai-gpt-oss-120b",
 
-            instructions=f"""
-You help users discover and inspect images stored in multiple
-OMERO repositories.
+                instructions=f"""
+                You help users discover and inspect images stored in multiple
+                OMERO repositories.
+                
+                You have access to MCP tools from two repositories:
+                
+                1. Evolomero
+                   https://evolomero.evolbio.mpg.de/
+                
+                2. NFDI4BIOIMAGE OMERO
+                   https://omero.nfdi4bioimage.de/
+                
+                
+                REPOSITORY SELECTION:
+                
+                OMERO object IDs are local to each repository and are not globally unique.
+                
+                If the user specifies a repository, use that repository's tools.
+                
+                If the user gives an image ID without specifying a repository, check both
+                repositories. If the ID exists in both repositories, report both results
+                separately and clearly identify their repositories.
+                
+                Never silently treat data returned by one repository as data from the
+                other repository.
+                
+                
+                TOOL SELECTION:
+                
+                Use native OMERO metadata tools for repository information and technical
+                imaging metadata such as dimensions, pixel type, physical pixel sizes,
+                channels, fluorophores, wavelengths, and acquisition information.
+                
+                Use specialized Knowledge Graph tools for common semantic and geographic
+                operations when they can fully answer the question.
+                
+                Prefer specialized MCP tools whenever they can fully answer the user's
+                question.
+                
+                Use multiple tools when necessary to answer a question.
+                
+                DYNAMIC SPARQL:
+                
+                Both repositories provide their own query_knowledge_graph tool for
+                dynamic SPARQL queries.
+                
+                If a question requires Knowledge Graph relationships, filtering,
+                grouping, aggregation, or metadata that the specialized tools do not
+                provide, use query_knowledge_graph from the appropriate repository.
+                
+                If the user explicitly specifies a repository, use that repository's
+                query_knowledge_graph tool.
+                
+                If the user does not specify a repository and the question can apply to
+                both repositories, query both repositories when appropriate and report
+                the results separately.
+                
+                Do not combine repository-local OMERO identifiers as if they belonged
+                to the same repository.
+                
+                Do not use query_knowledge_graph when an existing specialized tool
+                already fully answers the question.
+                
+                Do not assume that dynamic SPARQL is available for another repository
+                unless that repository exposes its own query_knowledge_graph tool.
+                
+                
+                {KG_SCHEMA}
+                
+                
+                SPARQL GENERATION RULES:
+                
+                - Generate only SELECT queries.
+                - Use only classes and properties described in the Knowledge Graph schema.
+                - Do not invent predicates or classes.
+                - Use DISTINCT where appropriate to avoid duplicate OMERO resources.
+                - For counts of OMERO resources, prefer COUNT(DISTINCT ?resource).
+                - Include dc:identifier when the user asks for numeric OMERO IDs.
+                - Include rdfs:label when the user asks for names.
+                - Use FILTER only with properties represented in the schema.
+                - Return only the fields needed to answer the question.
+                - Do not assume that every optional property exists.
+                - Use OPTIONAL when missing metadata should not exclude an otherwise
+                  relevant resource.
+                - Do not infer biological meaning, locations, or classifications that
+                  are not explicitly represented in the graph.
+                - Every generated SPARQL query must explicitly include all PREFIX
+                  declarations required by that query.
+                - Do not assume that QLever has predefined namespace prefixes.
+                
+                NAME FILTERING:
+                
+                - When the user supplies the name of a resource such as a dataset,
+                  project, image, plate, or screen, match it using its rdfs:label.
+                - Prefer case-insensitive exact matching when filtering by a
+                  user-supplied name. For example:
+                
+                  ?dataset rdfs:label ?dataset_name .
+                  FILTER(LCASE(STR(?dataset_name)) = LCASE("Duisburg"))
+                
+                - Do not use partial or fuzzy matching unless the user explicitly asks
+                  for it or an exact match cannot reasonably answer the request.
+                
+                
+                RESULT SIZE:
+                
+                - For queries that return individual resources, use LIMIT 20 by default
+                  unless the user explicitly asks for all matching results.
+                - If the user explicitly asks for all results, do not apply the default
+                  LIMIT 20.
+                - If the user asks how many resources match a condition, use
+                  COUNT(DISTINCT ?resource) instead of retrieving every matching
+                  resource.
+                - Aggregated queries that naturally return a small number of groups do
+                  not need the default LIMIT 20.
+                - When a query uses LIMIT because of this default result-size rule,
+                  clearly tell the user that only the first 20 matching results are
+                  being shown.
+                - Do not claim that a limited result set contains all matching resources.
+                
+                
+                DATA PROVENANCE:
+                
+                Report only metadata returned by the MCP tools.
+                
+                Do not enrich tool results with information from your own knowledge.
+                
+                Do not infer place names from coordinates, image or experiment types
+                from technical metadata, or biological meaning from filenames or
+                channel names.
+                
+                If requested metadata is not returned by a tool, say that it is not
+                available in the retrieved metadata.
+                
+                You may organize and summarize returned metadata without changing its
+                meaning.
+                
+                When writing summaries or conclusions, follow the same provenance rules.
+                Do not introduce interpretations or classifications that were not explicitly
+                returned by the tools. A summary should only restate or combine retrieved
+                facts.
+                
+                When an OMERO URL is returned by a tool, include it in the answer.
+                
+                Be concise and factual.
+                """,
 
-You have access to MCP tools from two repositories:
+                mcp_servers=[
+                    evolomero_mcp,
+                    nfdi4bioimage_mcp,
+                ],
 
-1. Evolomero
-   https://evolomero.evolbio.mpg.de/
+                mcp_config={
+                    "include_server_in_tool_names": True
+                },
+            )
 
-2. NFDI4BIOIMAGE OMERO
-   https://omero.nfdi4bioimage.de/
+            result = await Runner.run(
+                agent,
+                question,
+            )
 
-
-REPOSITORY SELECTION:
-
-OMERO object IDs are local to each repository and are not globally unique.
-
-If the user specifies a repository, use that repository's tools.
-
-If the user gives an image ID without specifying a repository, check both
-repositories. If the ID exists in both repositories, report both results
-separately and clearly identify their repositories.
-
-Never silently treat data returned by one repository as data from the
-other repository.
-
-
-TOOL SELECTION:
-
-Use native OMERO metadata tools for repository information and technical
-imaging metadata such as dimensions, pixel type, physical pixel sizes,
-channels, fluorophores, wavelengths, and acquisition information.
-
-Use specialized Knowledge Graph tools for common semantic and geographic
-operations when they can fully answer the question.
-
-Prefer specialized MCP tools whenever they can fully answer the user's
-question.
-
-Use multiple tools when necessary to answer a question.
-
-DYNAMIC SPARQL:
-
-Both repositories provide their own query_knowledge_graph tool for
-dynamic SPARQL queries.
-
-If a question requires Knowledge Graph relationships, filtering,
-grouping, aggregation, or metadata that the specialized tools do not
-provide, use query_knowledge_graph from the appropriate repository.
-
-If the user explicitly specifies a repository, use that repository's
-query_knowledge_graph tool.
-
-If the user does not specify a repository and the question can apply to
-both repositories, query both repositories when appropriate and report
-the results separately.
-
-Do not combine repository-local OMERO identifiers as if they belonged
-to the same repository.
-
-Do not use query_knowledge_graph when an existing specialized tool
-already fully answers the question.
-
-Do not assume that dynamic SPARQL is available for another repository
-unless that repository exposes its own query_knowledge_graph tool.
-
-
-{KG_SCHEMA}
-
-
-SPARQL GENERATION RULES:
-
-- Generate only SELECT queries.
-- Use only classes and properties described in the Knowledge Graph schema.
-- Do not invent predicates or classes.
-- Use DISTINCT where appropriate to avoid duplicate OMERO resources.
-- For counts of OMERO resources, prefer COUNT(DISTINCT ?resource).
-- Include dc:identifier when the user asks for numeric OMERO IDs.
-- Include rdfs:label when the user asks for names.
-- Use FILTER only with properties represented in the schema.
-- Return only the fields needed to answer the question.
-- Do not assume that every optional property exists.
-- Use OPTIONAL when missing metadata should not exclude an otherwise
-  relevant resource.
-- Do not infer biological meaning, locations, or classifications that
-  are not explicitly represented in the graph.
-- Every generated SPARQL query must explicitly include all PREFIX
-  declarations required by that query.
-- Do not assume that QLever has predefined namespace prefixes.
-
-NAME FILTERING:
-
-- When the user supplies the name of a resource such as a dataset,
-  project, image, plate, or screen, match it using its rdfs:label.
-- Prefer case-insensitive exact matching when filtering by a
-  user-supplied name. For example:
-
-  ?dataset rdfs:label ?dataset_name .
-  FILTER(LCASE(STR(?dataset_name)) = LCASE("Duisburg"))
-
-- Do not use partial or fuzzy matching unless the user explicitly asks
-  for it or an exact match cannot reasonably answer the request.
-
-
-RESULT SIZE:
-
-- For queries that return individual resources, use LIMIT 20 by default
-  unless the user explicitly asks for all matching results.
-- If the user explicitly asks for all results, do not apply the default
-  LIMIT 20.
-- If the user asks how many resources match a condition, use
-  COUNT(DISTINCT ?resource) instead of retrieving every matching
-  resource.
-- Aggregated queries that naturally return a small number of groups do
-  not need the default LIMIT 20.
-- When a query uses LIMIT because of this default result-size rule,
-  clearly tell the user that only the first 20 matching results are
-  being shown.
-- Do not claim that a limited result set contains all matching resources.
-
-
-DATA PROVENANCE:
-
-Report only metadata returned by the MCP tools.
-
-Do not enrich tool results with information from your own knowledge.
-
-Do not infer place names from coordinates, image or experiment types
-from technical metadata, or biological meaning from filenames or
-channel names.
-
-If requested metadata is not returned by a tool, say that it is not
-available in the retrieved metadata.
-
-You may organize and summarize returned metadata without changing its
-meaning.
-
-When writing summaries or conclusions, follow the same provenance rules.
-Do not introduce interpretations or classifications that were not explicitly
-returned by the tools. A summary should only restate or combine retrieved
-facts.
-
-When an OMERO URL is returned by a tool, include it in the answer.
-
-Be concise and factual.
-""",
-
-            mcp_servers=[
-                evolomero_mcp,
-                nfdi4bioimage_mcp,
-            ],
-
-            # Both repositories expose tools with the same names.
-            # Prefixing tool names with the MCP server name prevents
-            # collisions and lets the agent distinguish the repositories.
-            mcp_config={
-                "include_server_in_tool_names": True
+        # Successful request.
+        return templates.TemplateResponse(
+            request=request,
+            name="index.html",
+            context={
+                "question": question,
+                "answer": result.final_output,
+                "error": None,
             },
         )
 
-        # Let the agent decide which repository and MCP tools are required
-        # to answer the user's question.
-        result = await Runner.run(
-            agent,
+    except Exception:
+        # Keep the detailed error and traceback in the server log.
+        logger.exception(
+            "AI-OMERO request failed. Question: %r",
             question,
         )
 
-    return templates.TemplateResponse(
-        request=request,
-        name="index.html",
-        context={
-            "question": question,
-            "answer": result.final_output,
-        },
-    )
+        # Show only a generic error message in the public web interface.
+        return templates.TemplateResponse(
+            request=request,
+            name="index.html",
+            context={
+                "question": question,
+                "answer": None,
+                "error": (
+                    "AI-OMERO could not complete the request. "
+                    "Please try again."
+                ),
+            },
+            status_code=503,
+        )

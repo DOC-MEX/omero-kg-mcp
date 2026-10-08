@@ -6,6 +6,7 @@
 
     <title>AI-OMERO</title>
 
+    <!-- Local FastAPI static path -->
     <link rel="stylesheet"
           href="/ai-omero/static/style.css">
 </head>
@@ -75,6 +76,21 @@
         </div>
 
     </section>
+
+
+    {% if error %}
+
+    <section class="error-card">
+
+        <div class="error-heading">
+            Unable to complete the request
+        </div>
+
+        <p>{{ error }}</p>
+
+    </section>
+
+    {% endif %}
 
 
     {% if answer %}

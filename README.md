@@ -56,19 +56,154 @@ The project includes a compact description of the OMERO Knowledge Graph schema:
 ```text
 prompts/omero_kg_schema.txt
 ```
-The schema describes the classes, properties, relationships, and prefixes that can be used when constructing SPARQL queries against the OMERO Knowledge Graph.
+The file is organized into sections, each describing the RDF classes, properties, and graph patterns for a particular part of the OMERO data model, for our OMERO knowledge graph we have these sections:
 
-It includes, among others, mappings for:
+- PREFIXES — namespace/prefix definitions
+- CORE RESOURCE TYPES — resource/class definitions
+- COMMON RESOURCE METADATA — common metadata properties
+- PROJECT, DATASET, AND IMAGE HIERARCHY — hierarchy domain section
+- IMAGE METADATA — image metadata domain section
+- GEOLOCATION — geospatial domain section
+- MAPANNOTATIONS — annotation domain section
+- EXPERIMENTERS AND GROUPS — user/group domain section
+- PLATES, WELLS, AND WELL SAMPLES — high-content-screening domain section
+- PIXELS, CHANNELS, AND ROIS — imaging metadata domain section
+- OMERO SERVER — repository/server domain section
 
-- Images, Datasets, and Projects;
-- Experimenters and Experimenter Groups;
-- MapAnnotations;
-- Plates, Wells, and WellSamples;
-- Pixels, Channels, and ROIs;
-- OMERO servers;
-- GeoSPARQL geometries and WKT locations.
+A general-purpose LLM can already generate SPARQL syntax, but it does not inherently know how a particular OMERO Knowledge Graph represents Images, Datasets, Projects, annotations, or geographic information. Without this information, a model could generate plausible or valid SPARQL but using predicates or relationships that do not exist in the graph.
 
-The schema is used by the AI test client.
+The schema therefore provides the agent with the specific information required for valid SPARQL generation. 
+The following excerpt shows how the vocabulary, relationships, and  patterns are described in the schema file (`omero_kg_schema.txt`):
+
+```text
+SPARQL KNOWLEDGE GRAPH SCHEMA
+
+Use only the classes and properties described below. Do not invent
+predicates or classes.
+
+
+PREFIXES
+
+PREFIX core: <https://ld.openmicroscopy.org/core/>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX this: <https://ld.openmicroscopy.org/omekg#>
+...
+
+
+CORE RESOURCE TYPES
+
+The graph can contain:
+
+core:Image
+core:Dataset
+core:Project
+core:Experimenter
+core:ExperimenterGroup
+core:MapAnnotation
+...
+
+PROJECT, DATASET, AND IMAGE HIERARCHY
+
+Project to Dataset:
+
+?project a core:Project ;
+         dcterms:hasPart ?dataset .
+
+Dataset to Project:
+
+?dataset dcterms:isPartOf ?project .
+
+Dataset to Image:
+
+?dataset a core:Dataset ;
+         dcterms:hasPart ?image .
+
+Image to Dataset:
+
+?image dcterms:isPartOf ?dataset .
+
+
+IMAGE METADATA
+
+Image name:
+
+?image a core:Image ;
+       rdfs:label ?image_name .
+
+Image acquisition date:
+
+?image this:acquisition_date ?acquisition_date .
+
+Image thumbnail:
+
+?image this:thumbnail ?thumbnail .
+
+Tag value attached directly by the mapping:
+
+?image this:tag_annotation_value ?tag .
+
+Dataset tags are also available as:
+
+?dataset this:tag_annotation_value ?tag .
+...
+```
+
+The file describes graph patterns rather than only listing vocabulary it tells the agent not only which classes and properties exist, but also how resources are connected.
+
+For example, the schema tells the agent that a Dataset contains an Image through:
+
+```sparql
+?dataset a core:Dataset ;
+         dcterms:hasPart ?image .
+```
+
+that an Image identifier and name can be retrieved using:
+
+```sparql
+?image dc:identifier ?image_id ;
+       rdfs:label ?image_name .
+```
+
+For example, given the natural-language question:
+
+```text
+Which geolocated images belong to the Duisburg dataset?
+Give me their image IDs and names.
+```
+
+the agent can identify the required relationships from the schema and construct a query such as:
+
+```sparql
+PREFIX core: <https://ld.openmicroscopy.org/core/>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+
+SELECT DISTINCT ?image_id ?image_name
+WHERE {
+    ?dataset a core:Dataset ;
+             rdfs:label ?dataset_name ;
+             dcterms:hasPart ?image .
+
+    FILTER(LCASE(STR(?dataset_name)) = LCASE("Duisburg"))
+
+    ?image a core:Image ;
+           dc:identifier ?image_id ;
+           rdfs:label ?image_name ;
+           geo:hasGeometry/geo:asWKT ?wkt .
+}
+LIMIT 20
+```
+
+In this example, the query was not predefined in the REST API or MCP server. The agent generated it dynamically by combining graph patterns from different sections of the schema.
+
+The generated `SELECT` query is passed to the `query_knowledge_graph()` MCP tool and executed directly against QLever.
+
+The schema does not replace the OBDA mapping used to construct the Knowledge Graph. Instead, it provides a compact description of the resulting graph that can be supplied to an LLM for SPARQL generation.
 
 ## Custom Knowledge Graph REST API
 

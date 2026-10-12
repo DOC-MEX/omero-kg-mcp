@@ -354,6 +354,18 @@ async def ask(
                 flush=True,
             ) 
 
+        
+        # LLM token usage (aggregated across requests)        
+        usage = result.context_wrapper.usage
+        print(
+            f"LLM usage. "
+            f"Requests: {usage.requests}. "
+            f"Input tokens: {usage.input_tokens}. "
+            f"Output tokens: {usage.output_tokens}. "
+            f"Total tokens: {usage.total_tokens}",
+            flush=True,
+        )
+       
         # Successful request.
         return templates.TemplateResponse(
             request=request,

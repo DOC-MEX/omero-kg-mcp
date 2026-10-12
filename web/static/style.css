@@ -186,6 +186,17 @@ button:hover {
     line-height: 1.65;
 }
 
+/* Model used to generate the AI-OMERO response */
+.model-info {
+    padding: 10px 24px;
+
+    background: #f8f9fa;
+    border-top: 1px solid #e5e7eb;
+
+    color: #667085;
+    font-size: 12px;
+}
+
 footer {
     margin-top: 35px;
 

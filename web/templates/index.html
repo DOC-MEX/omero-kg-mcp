@@ -21,7 +21,7 @@
         <h1>AI-OMERO</h1>
 
         <p class="subtitle">
-            Explore the OMERO repository using natural language.
+            Explore OMERO repositories using natural language.
         </p>
     </header>
 
@@ -41,6 +41,26 @@
                 maxlength="2000"
                 placeholder="e.g. Tell me about image 427"
                 required>{{ question }}</textarea>
+
+            <div class="model-picker" style="margin: 0.9rem 0;">
+                <label for="model">Language model</label>
+                <select id="model" name="model" style="margin-left: 0.5rem; padding: 0.35rem; max-width: 100%;">
+                    <option value="qwen3-coder-next" {% if model == 'qwen3-coder-next' %}selected{% endif %}>Qwen Coder Next</option>
+                    <option value="qwen3.6-35b-a3b" {% if model == 'qwen3.6-35b-a3b' %}selected{% endif %}>Qwen 3.6 (35B)</option>
+                    <option value="qwen3.5-397b-a17b" {% if model == 'qwen3.5-397b-a17b' %}selected{% endif %}>Qwen 3.5 (397B) — baseline</option>
+                </select>
+                <p class="hint">Same tools and instructions for each model within the selected mode.</p>
+            </div>
+
+            <!-- NEW: Manual choice between lightweight and SPARQL-enabled agents. -->
+            <div class="mode-picker" style="margin: 0.9rem 0;">
+                <label for="mode">Agent mode</label>
+                <select id="mode" name="mode" style="margin-left: 0.5rem; padding: 0.35rem; max-width: 100%;">
+                    <option value="standard" {% if mode != 'sparql' %}selected{% endif %}>Standard MCP (fast; no KG schema)</option>
+                    <option value="sparql" {% if mode == 'sparql' %}selected{% endif %}>Dynamic SPARQL (KG schema enabled)</option>
+                </select>
+                <p class="hint">SPARQL mode enables graph queries when predefined tools cannot answer.</p>
+            </div>
 
             <div class="form-footer">
 
@@ -106,8 +126,19 @@
         </div>
 
        <div class="model-info">
-         Model: {{ model }}
+         Mode: {{ 'Dynamic SPARQL' if mode == 'sparql' else 'Standard MCP' }} · Model: {{ model }}
+         {% if elapsed_seconds is not none %}
+           · Agent execution: {{ elapsed_seconds }} s
+         {% endif %}
+         {% if total_tokens is not none %}
+           · Total tokens: {{ total_tokens }}
+         {% endif %}
        </div>
+       {% if tool_calls %}
+       <div class="model-info" style="margin-top: 0.35rem;">
+         MCP calls ({{ tool_calls|length }}): {{ tool_calls|join(', ') }}
+       </div>
+       {% endif %}
 
     </section>
 

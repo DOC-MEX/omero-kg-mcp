@@ -1,180 +1,126 @@
+import logging
 import os
 import time
 from pathlib import Path
 
-import markdown
-import bleach
-import logging
-
+from agents import (
+    Agent,
+    Runner,
+    set_default_openai_api,
+    set_default_openai_client,
+    set_tracing_disabled,
+)
+from agents.mcp import MCPServerStreamableHttp, create_static_tool_filter
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-
 from openai import AsyncOpenAI
 
-from agents import (
-    Agent,
-    Runner,
-    set_default_openai_client,
-    set_default_openai_api,
-    set_tracing_disabled,
-)
-from agents.mcp import MCPServerStreamableHttp
-
 logger = logging.getLogger("ai-omero")
-
-# ------------------------------------------------------------
-# Knowledge Graph schema
-# ------------------------------------------------------------
-
-BASE_DIR = Path(__file__).resolve().parent
-
-KG_SCHEMA_FILE = (
-    BASE_DIR / "prompts" / "omero_kg_schema.txt"
-)
-
-KG_SCHEMA = KG_SCHEMA_FILE.read_text(
-    encoding="utf-8"
-)
 
 # ------------------------------------------------------------
 # Academic Cloud / SAIA configuration
 # ------------------------------------------------------------
 
-# The API key is provided through the environment rather than stored
-# directly in the source code.
 SAIA_API_KEY = os.environ.get("SAIA_API_KEY")
-
 if not SAIA_API_KEY:
-    raise RuntimeError(
-        "SAIA_API_KEY environment variable is not set."
-    )
+    raise RuntimeError("SAIA_API_KEY environment variable is not set.")
 
-# Model used by the OMERO agent.
-#MODEL = "openai-gpt-oss-120b"
-MODEL = "qwen3.5-397b-a17b"
+# Change models directly here. The same instructions and tools are used
+# for every selection so response time, tokens and answers are comparable.
+MODELS = (
+    "qwen3-coder-next",
+    "qwen3.6-35b-a3b",
+    "qwen3.5-397b-a17b",  # Original web app baseline
+)
+DEFAULT_MODEL = MODELS[0]
 
-# Academic Cloud provides an OpenAI-compatible API, so it can be used
-# through the standard AsyncOpenAI client.
-#
-# This timeout applies to an individual Academic Cloud / LLM request.
+# NEW: Explicit agent mode
+MODES = ("standard", "sparql")
+DEFAULT_MODE = MODES[0]
+
 academic_cloud_client = AsyncOpenAI(
     api_key=SAIA_API_KEY,
     base_url="https://chat-ai.academiccloud.de/v1",
     timeout=300.0,
     max_retries=0,
 )
-
-# Configure the Agents SDK to use Academic Cloud for model requests.
-set_default_openai_client(
-    academic_cloud_client,
-    use_for_tracing=False,
-)
-
+set_default_openai_client(academic_cloud_client, use_for_tracing=False)
 set_default_openai_api("chat_completions")
 set_tracing_disabled(True)
 
-
 # ------------------------------------------------------------
-# Web application
+# Web application and repository MCP endpoints
 # ------------------------------------------------------------
 
 app = FastAPI()
-
-# Static files (CSS, images, etc.) and HTML templates used by the
-# lightweight web interface.
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-
-# ------------------------------------------------------------
-# MCP servers
-# ------------------------------------------------------------
-
-# Each OMERO repository exposes its own MCP endpoint. The URLs can be
-# overridden through environment variables if necessary.
 EVOLOMERO_MCP_URL = os.getenv(
-    "EVOLOMERO_MCP_URL",
-    "https://evolomero.evolbio.mpg.de/mcp",
+    "EVOLOMERO_MCP_URL", "https://evolomero.evolbio.mpg.de/mcp"
 )
-
 NFDI4BIOIMAGE_MCP_URL = os.getenv(
-    "NFDI4BIOIMAGE_MCP_URL",
-    "https://omero.nfdi4bioimage.de/kg-mcp/mcp",
+    "NFDI4BIOIMAGE_MCP_URL", "https://omero.nfdi4bioimage.de/kg-mcp/mcp"
 )
 
+# NEW: Standard mode hides SPARQL. In SPARQL mode, no filter is applied.
+# The KG schema is read only when SPARQL mode is selected.
+STANDARD_TOOL_FILTER = create_static_tool_filter(
+    blocked_tool_names=["query_knowledge_graph"]
+)
 
-# ------------------------------------------------------------
-# Web routes
-# ------------------------------------------------------------
+STANDARD_INSTRUCTIONS = """
+You help users discover and inspect images in two OMERO repositories:
+- Evolomero: https://evolomero.evolbio.mpg.de/
+- NFDI4BIOIMAGE: https://omero.nfdi4bioimage.de/
 
-@app.get("/", response_class=HTMLResponse)
-async def index(request: Request):
-    """Display the initial question form."""
+REPOSITORY SELECTION:
+OMERO object IDs are local to each repository, not globally unique.
+When a repository is specified, use only its tools.
+If an image ID is given without a repository, look it up in BOTH repositories.
+Report each repository separately, including missing images when appropriate.
+For location searches without a repository, consult both repositories.
+If the user asks for the closest N images overall, compare distances returned
+by the tools and report at most N results across both repositories, naming the
+repository of each image. Do not invent distances or conflate image IDs.
 
-    return templates.TemplateResponse(
-        request=request,
-        name="index.html",
-        context={
-            "question": "",
-            "answer": None,
-            "error": None,
-            "model": MODEL,
-        },
-    )
+TOOL SELECTION:
+Use native OMERO tools for dimensions, pixel types, channels and other
+technical metadata. Use specialized Knowledge Graph tools for datasets,
+projects, geolocation, geographic searches and OMERO resource links.
+Prefer the specialized tool when it fully answers the question; call both
+kinds only when the requested data require them.
+Dynamic SPARQL is not available in this mode. Do not invent information
+when the predefined tools cannot answer a question; state the limitation.
 
+ACCURACY AND FORMAT:
+Report only facts returned by MCP tools. Do not infer places from coordinates,
+biological classifications from filenames or meanings from channel names.
+Report unavailable requested fields as unavailable. Include returned OMERO URLs.
+Keep the answer concise, factual and organized by repository when appropriate.
+Answer the question and STOP. Do not add unsolicited follow-up questions,
+recommendations, invitations, or offers for further information.
+""".strip()
 
-@app.post("/", response_class=HTMLResponse)
-async def ask(
-    request: Request,
-    question: str = Form(...),
-):
-    """Send a user question to the OMERO agent and display its answer."""
+# Detailed SPARQL instructions.
+# The schema is loaded only for requests explicitly using SPARQL mode.
+KG_SCHEMA_FILE = Path(__file__).resolve().parent / "prompts" / "omero_kg_schema.txt"
+SPARQL_INSTRUCTIONS_TEMPLATE = """
 
-    try:
-        # Connect to both repository-specific MCP servers.
-        async with MCPServerStreamableHttp(
-            name="Evolomero",
-            params={
-                "url": EVOLOMERO_MCP_URL,
-                "timeout": 30,
-            },
-            cache_tools_list=True,
-            client_session_timeout_seconds=30,
-        ) as evolomero_mcp, MCPServerStreamableHttp(
-            name="NFDI4BIOIMAGE",
-            params={
-                "url": NFDI4BIOIMAGE_MCP_URL,
-                "timeout": 30,
-            },
-            cache_tools_list=True,
-            client_session_timeout_seconds=30,
-        ) as nfdi4bioimage_mcp:
-
-            agent = Agent(
-                name="OMERO KG Assistant",
-                model=MODEL,
-
-                instructions=f"""
                 You help users discover and inspect images stored in multiple
                 OMERO repositories.
-
                 You have access to MCP tools from two repositories:
-
                 1. Evolomero
                    https://evolomero.evolbio.mpg.de/
 
                 2. NFDI4BIOIMAGE OMERO
                    https://omero.nfdi4bioimage.de/
 
-
                 REPOSITORY SELECTION:
-
                 OMERO object IDs are local to each repository and are not globally unique.
-
                 If the user specifies a repository, use that repository's tools.
-
                 If the user gives an image ID without specifying a repository, check both
                 repositories. If the ID exists in both repositories, report both results
                 separately and clearly identify their repositories.
@@ -182,13 +128,10 @@ async def ask(
                 Never silently treat data returned by one repository as data from the
                 other repository.
 
-
                 TOOL SELECTION:
-
                 Use native OMERO metadata tools for repository information and technical
                 imaging metadata such as dimensions, pixel type, physical pixel sizes,
                 channels, fluorophores, wavelengths, and acquisition information.
-
                 Use specialized Knowledge Graph tools for common semantic and geographic
                 operations when they can fully answer the question.
 
@@ -197,9 +140,7 @@ async def ask(
 
                 Use multiple tools when necessary to answer a question.
 
-
                 DYNAMIC SPARQL:
-
                 Both repositories provide their own query_knowledge_graph tool for
                 dynamic SPARQL queries.
 
@@ -223,9 +164,7 @@ async def ask(
                 Do not assume that dynamic SPARQL is available for another repository
                 unless that repository exposes its own query_knowledge_graph tool.
 
-
                 {KG_SCHEMA}
-
 
                 SPARQL GENERATION RULES:
 
@@ -252,13 +191,11 @@ async def ask(
 
 
                 SPARQL ERROR RECOVERY:
-
                 - Prefer repairing the failed query rather than generating unrelated
                   alternative queries.
                 - Check missing PREFIX declarations, invalid properties, classes, syntax,
                   and graph patterns against the provided Knowledge Graph schema.
                 - Do not repeatedly submit the same failing query without modification.
-
 
                 NAME FILTERING:
 
@@ -311,91 +248,152 @@ async def ask(
                 Do not introduce interpretations or classifications that were not explicitly
                 returned by the tools. A summary should only restate or combine retrieved
                 facts.
-
+                
                 When an OMERO URL is returned by a tool, include it in the answer.
-
                 Be concise and factual.
-                """,
+                """
 
-                mcp_servers=[
-                    evolomero_mcp,
-                    nfdi4bioimage_mcp,
-                ],
 
-                mcp_config={
-                    "include_server_in_tool_names": True
-                },
-            )
+def instructions_for_mode(mode):
+    if mode == "standard":
+        return STANDARD_INSTRUCTIONS
+    schema = KG_SCHEMA_FILE.read_text(encoding="utf-8")
+    return (
+        SPARQL_INSTRUCTIONS_TEMPLATE.replace("{KG_SCHEMA}", schema)
+        + "\n\nAnswer the question and STOP. Do not add unsolicited "
+          "follow-up questions or offers of further information."
+    )
 
-            # ------------------------------------------------------------
-            # Run agent and measure execution time
-            # ------------------------------------------------------------
 
-            print(
-                f"Starting agent run. "
-                f"Model: {MODEL}. "
-                f"Question: {question!r}",
-                flush=True,
-            )
+def actual_tool_calls(result):
+    """Return ordered MCP tool names, retaining repeated calls."""
+    calls = []
+    for item in result.new_items:
+        if getattr(item, "type", None) != "tool_call_item":
+            continue
+        name = getattr(item, "tool_name", None)
+        if not name:
+            raw = getattr(item, "raw_item", None)
+            name = raw.get("name") if isinstance(raw, dict) else getattr(raw, "name", None)
+        calls.append(str(name or "<unknown>"))
+    return calls
 
-            start_time = time.perf_counter()
 
-            result = await Runner.run(
-                agent,
-                question,
-            )
+def page_context(question="", model=DEFAULT_MODEL, mode=DEFAULT_MODE,
+                 answer=None, error=None,
+                 elapsed_seconds=None, total_tokens=None, tool_calls=None):
+    return {
+        "question": question,
+        "model": model,
+        "mode": mode,
+        "answer": answer,
+        "error": error,
+        "elapsed_seconds": elapsed_seconds,
+        "total_tokens": total_tokens,
+        "tool_calls": tool_calls,
+    }
 
-            elapsed = time.perf_counter() - start_time
 
-            print(
-                f"Agent run completed. "
-                f"Model: {MODEL}. "
-                f"Elapsed time: {elapsed:.1f} seconds",
-                flush=True,
-            ) 
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    return templates.TemplateResponse(
+        request=request, name="index.html", context=page_context()
+    )
 
-        
-        # LLM token usage (aggregated across requests)        
-        usage = result.context_wrapper.usage
-        print(
-            f"LLM usage. "
-            f"Requests: {usage.requests}. "
-            f"Input tokens: {usage.input_tokens}. "
-            f"Output tokens: {usage.output_tokens}. "
-            f"Total tokens: {usage.total_tokens}",
-            flush=True,
-        )
-       
-        # Successful request.
+
+@app.post("/", response_class=HTMLResponse)
+async def ask(request: Request, question: str = Form(...),
+              model: str = Form(DEFAULT_MODEL),
+              mode: str = Form(DEFAULT_MODE)):
+    # Limit SAIA model selection to the models offered in the interface.
+    if model not in MODELS:
         return templates.TemplateResponse(
             request=request,
             name="index.html",
-            context={
-                "question": question,
-                "answer": result.final_output,
-                "error": None,
-                "model": MODEL,
-            },
+            context=page_context(question=question, error="Unknown model selected."),
+            status_code=400,
+        )
+
+    # NEW: Validate selected mode, independently of model selection.
+    if mode not in MODES:
+        return templates.TemplateResponse(
+            request=request,
+            name="index.html",
+            context=page_context(question=question, model=model,
+                                 error="Unknown agent mode selected."),
+            status_code=400,
+        )
+
+    try:
+        instructions = instructions_for_mode(mode)
+        # None allows all MCP tools; standard mode hides dynamic SPARQL.
+        tool_filter = STANDARD_TOOL_FILTER if mode == "standard" else None
+        async with MCPServerStreamableHttp(
+            name="Evolomero",
+            params={"url": EVOLOMERO_MCP_URL, "timeout": 30},
+            cache_tools_list=True,
+            client_session_timeout_seconds=30,
+            tool_filter=tool_filter,
+        ) as evolomero_mcp, MCPServerStreamableHttp(
+            name="NFDI4BIOIMAGE",
+            params={"url": NFDI4BIOIMAGE_MCP_URL, "timeout": 30},
+            cache_tools_list=True,
+            client_session_timeout_seconds=30,
+            tool_filter=tool_filter,
+        ) as nfdi4bioimage_mcp:
+            agent = Agent(
+                name="OMERO KG Assistant",
+                model=model,
+                instructions=instructions,
+                mcp_servers=[evolomero_mcp, nfdi4bioimage_mcp],
+                mcp_config={"include_server_in_tool_names": True},
+            )
+
+            print(
+                f"Starting agent run. Mode: {mode}. Model: {model}. Question: {question!r}",
+                flush=True,
+            )
+            start = time.perf_counter()
+            result = await Runner.run(agent, question, max_turns=10)
+            elapsed_seconds = time.perf_counter() - start
+            print(
+                f"Agent run completed. Mode: {mode}. Model: {model}. "
+                f"Elapsed time: {elapsed_seconds:.1f} seconds",
+                flush=True,
+            )
+
+        usage = result.context_wrapper.usage
+        calls = actual_tool_calls(result)
+        logger.info(
+            "Agent completed: mode=%s model=%s elapsed=%.1fs requests=%s "
+            "input=%s output=%s total=%s calls=%s",
+            mode, model, elapsed_seconds, usage.requests, usage.input_tokens,
+            usage.output_tokens, usage.total_tokens, calls,
+        )
+        return templates.TemplateResponse(
+            request=request,
+            name="index.html",
+            context=page_context(
+                question=question,
+                model=model,
+                mode=mode,
+                answer=result.final_output,
+                elapsed_seconds=round(elapsed_seconds, 1),
+                total_tokens=usage.total_tokens,
+                tool_calls=calls,
+            ),
         )
 
     except Exception:
-        # Keep the detailed error and traceback in the server log.
-        logger.exception(
-            "AI-OMERO request failed. Question: %r",
-            question,
-        )
-
-        # Show only a generic error message in the public web interface.
+        logger.exception("AI-OMERO request failed: mode=%s model=%s question=%r", mode, model, question)
         return templates.TemplateResponse(
             request=request,
             name="index.html",
-            context={
-                "question": question,
-                "answer": None,
-                "error": (
-                    "AI-OMERO could not complete the request. "
-                    "Please try again."
-                ),
-            },
+            context=page_context(
+                question=question,
+                model=model,
+                mode=mode,
+                error="AI-OMERO could not complete the request. Please try again.",
+            ),
             status_code=503,
         )

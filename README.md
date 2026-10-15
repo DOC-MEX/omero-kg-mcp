@@ -329,8 +329,36 @@ https://omero.nfdi4bioimage.de/kg-mcp/mcp
 The default model in the current configuration is:
 
 ```text
-openai-gpt-oss-120b
+qwen3-coder-next
 ```
+
+## Model selection and agent modes
+
+The web application currently allows the user to select between several language models available through the Academic Cloud API:
+
+```text
+qwen3-coder-next
+qwen3.6-35b-a3b
+qwen3.5-397b-a17b
+```
+
+`qwen3.5-397b-a17b` was used as an initial selection, while `qwen3-coder-next` and `qwen3.6-35b-a3b` are currently being evaluated as alternatives as faster alternative.
+
+The application also provides two agent modes:
+
+- **Standard MCP** — uses the predefined native OMERO and Knowledge Graph MCP tools. Dynamic SPARQL is disabled and the Knowledge Graph schema is not added to the model context.
+- **Dynamic SPARQL** — enables the `query_knowledge_graph()` tool and provides the Knowledge Graph schema to the agent, allowing it to generate SPARQL queries when the predefined tools are not sufficient.
+
+The same model can be tested under different workload.
+
+The current goal is to evaluate whether different models are better suited to different tasks, for example:
+
+- relatively simple requests that can be answered through predefined MCP tools;
+- requests that require combining information from several MCP tools;
+- more complex Knowledge Graph questions requiring schema-grounded dynamic SPARQL generation.
+
+For each request, the web application reports the selected model and agent mode together with execution time, total token usage, and the MCP tools that were called. These measurements provide an initial basis for comparing model efficiency and tool selection.
+
 
 ## Architecture
 

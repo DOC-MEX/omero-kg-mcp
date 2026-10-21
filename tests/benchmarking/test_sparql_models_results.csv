@@ -1,0 +1,1011 @@
+run_utc,repository,test_id,model,status,elapsed_seconds,llm_requests,input_tokens,output_tokens,total_tokens,tool_count,tools,sparql_calls,query_error_count,sparql_queries,answer,error
+2026-10-20T15:23:25+00:00,Evolomero,geolocated_images,qwen3.5-397b-a17b,OK,43.136,2,8047,1783,9830,1,mcp_Evolomero__query_knowledge_graph,1,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT DISTINCT ?image_id ?image_name WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name ; dcterms:hasPart ?image . FILTER(LCASE(STR(?dataset_name)) = LCASE(""Duisburg"")) ?image a core:Image ; dc:identifier ?image_id ; rdfs:label ?image_name ; geo:hasGeometry ?geometry . } LIMIT 20","
+
+I found 20 geolocated images belonging to the Duisburg dataset. Here are their image IDs and names:
+
+| Image ID | Image Name |
+|----------|------------|
+| 351 | 00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg |
+| 352 | 017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg |
+| 353 | 04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg |
+| 354 | 0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg |
+| 355 | 0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg |
+| 356 | 0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg |
+| 357 | 100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg |
+| 358 | 11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg |
+| 359 | 1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg |
+| 360 | 19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg |
+| 361 | 19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg |
+| 362 | 1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg |
+| 363 | 1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg |
+| 364 | 1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg |
+| 381 | 2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg |
+| 382 | 2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg |
+| 383 | 30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg |
+| 384 | 30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg |
+| 385 | 34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg |
+| 386 | 3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg |
+
+All 20 geolocated images from the Duisburg dataset are shown above. Each image has geographic coordinates associated with it (via the `geo:hasGeometry` property).",
+2026-10-20T15:23:25+00:00,Evolomero,geolocated_images,qwen3-coder-next,OK,12.865,2,18822,1267,20089,1,mcp_Evolomero__query_knowledge_graph,1,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX this: <https://ld.openmicroscopy.org/omekg#> SELECT DISTINCT ?image_id ?image_name WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name ; dcterms:hasPart ?image . ?image a core:Image ; dc:identifier ?image_id ; rdfs:label ?image_name ; geo:hasGeometry/geo:asWKT ?wkt . FILTER(LCASE(STR(?dataset_name)) = LCASE(""Duisburg"")) }","The geolocated images belonging to the Duisburg dataset are as follows. Only the first 20 results are shown below, as the full result set contains 141 matching images:
+
+| Image ID | Image Name |
+|----------|------------|
+| 351 | 00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg |
+| 352 | 017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg |
+| 353 | 04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg |
+| 354 | 0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg |
+| 355 | 0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg |
+| 356 | 0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg |
+| 357 | 100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg |
+| 358 | 11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg |
+| 359 | 1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg |
+| 360 | 19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg |
+| 361 | 19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg |
+| 362 | 1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg |
+| 363 | 1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg |
+| 364 | 1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg |
+| 381 | 2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg |
+| 382 | 2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg |
+| 383 | 30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg |
+| 384 | 30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg |
+| 385 | 34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg |
+| 386 | 3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg |
+
+Let me know if you'd like the complete list or further details about specific images.",
+2026-10-20T15:23:25+00:00,Evolomero,geolocated_images,qwen3.6-35b-a3b,OK,29.506,2,9332,3369,12701,1,mcp_Evolomero__query_knowledge_graph,1,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT DISTINCT ?id ?name WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name . FILTER(LCASE(STR(?dataset_name)) = LCASE(""Duisburg"")) ?image dcterms:isPartOf ?dataset . ?image a core:Image ; dc:identifier ?id ; rdfs:label ?name ; geo:hasGeometry ?geometry . } LIMIT 20","
+
+Based on the query results, here are the geolocated images that belong to the Duisburg dataset (showing the first 20 results as requested by the benchmark limit):
+
+| Image ID | Image Name |
+|----------|------------|
+| 351 | `00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg` |
+| 352 | `017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg` |
+| 353 | `04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg` |
+| 354 | `0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg` |
+| 355 | `0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg` |
+| 356 | `0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg` |
+| 357 | `100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg` |
+| 358 | `11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg` |
+| 359 | `1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg` |
+| 360 | `19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg` |
+| 361 | `19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg` |
+| 362 | `1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg` |
+| 363 | `1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg` |
+| 364 | `1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg` |
+| 381 | `2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg` |
+| 382 | `2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg` |
+| 383 | `30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg` |
+| 384 | `30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg` |
+| 385 | `34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg` |
+| 386 | `3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg` |
+
+*Note: The query was limited to 20 results. If the Duisburg dataset contains more than 20 geolocated images, additional results would require adjusting the limit.*",
+2026-10-20T15:23:25+00:00,Evolomero,geolocated_counts,qwen3.5-397b-a17b,OK,19.341,2,5952,774,6726,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT ?dataset ?dataset_name (COUNT(DISTINCT ?image) AS ?geolocated_image_count) WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name . ?dataset dcterms:hasPart ?image . ?image a core:Image ; geo:hasGeometry ?geometry . } GROUP BY ?dataset ?dataset_name ORDER BY DESC(?geolocated_image_count),"
+
+Based on the query results, **3 datasets** contain geolocated images in the Evolomero OMERO repository:
+
+| Dataset Name | Dataset ID | Geolocated Images |
+|--------------|------------|-------------------|
+| Duisburg | 151 | 141 |
+| check2 | 107 | 3 |
+| dataset1 | 105 | 2 |
+
+The **Duisburg** dataset contains the majority of geolocated images (141), while **check2** and **dataset1** contain 3 and 2 geolocated images respectively.",
+2026-10-20T15:23:25+00:00,Evolomero,geolocated_counts,qwen3-coder-next,OK,2.253,2,5252,266,5518,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT DISTINCT ?dataset ?dataset_name (COUNT(DISTINCT ?image) AS ?geolocated_image_count) WHERE { ?image a core:Image ; geo:hasGeometry/geo:asWKT ?wkt ; dcterms:isPartOf ?dataset . OPTIONAL { ?dataset rdfs:label ?dataset_name } } GROUP BY ?dataset ?dataset_name,"The datasets that contain geolocated images, along with the count of geolocated images in each dataset, are:
+
+- **dataset1**: 2 geolocated images  
+- **check2**: 3 geolocated images  
+- **Duisburg**: 141 geolocated images",
+2026-10-20T15:23:25+00:00,Evolomero,geolocated_counts,qwen3.6-35b-a3b,OK,56.43,2,7212,2254,9466,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?dataset_name (COUNT(DISTINCT ?image) AS ?geolocated_image_count) WHERE { ?image a core:Image ; geo:hasGeometry ?geometry ; dcterms:isPartOf ?dataset . ?dataset rdfs:label ?dataset_name . } GROUP BY ?dataset ?dataset_name ORDER BY DESC(?geolocated_image_count),"
+
+Based on the knowledge graph, there are 3 datasets that contain geolocated images:
+
+* **Duisburg**: 141 geolocated images
+* **check2**: 3 geolocated images
+* **dataset1**: 2 geolocated images
+
+The results are listed in descending order by image count. Let me know if you need additional metadata for any of these datasets or their images!",
+2026-10-20T15:39:11+00:00,Evolomero,geolocated_images,qwen3.5-397b-a17b,OK,32.616,2,21091,2078,23169,1,mcp_Evolomero__query_knowledge_graph,1,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT DISTINCT ?image_id ?image_name WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name ; dcterms:hasPart ?image . ?image a core:Image ; dc:identifier ?image_id ; rdfs:label ?image_name ; geo:hasGeometry ?geometry . FILTER(LCASE(STR(?dataset_name)) = LCASE(""Duisburg"")) }","
+
+There are **141 geolocated images** in the Duisburg dataset. Here are their image IDs and names:
+
+| Image ID | Image Name |
+|----------|------------|
+| 351 | 00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg |
+| 352 | 017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg |
+| 353 | 04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg |
+| 354 | 0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg |
+| 355 | 0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg |
+| 356 | 0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg |
+| 357 | 100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg |
+| 358 | 11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg |
+| 359 | 1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg |
+| 360 | 19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg |
+| 361 | 19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg |
+| 362 | 1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg |
+| 363 | 1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg |
+| 364 | 1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg |
+| 381 | 2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg |
+| 382 | 2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg |
+| 383 | 30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg |
+| 384 | 30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg |
+| 385 | 34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg |
+| 386 | 3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg |
+| ... | ... (121 more images) |
+| 603 | Rüttenscheid3.jpg |
+| 604 | Typography_636387AC-27D9-49D1-87BD-684DCAD82FC7_1_105_c.jpeg |
+
+The image IDs range from 351 to 604 (with some gaps). The images include both UUID-named JPEG files and descriptive filenames like ""Am Porschepl.jpg"", ""Bochold1.jpg"", ""Rüttenscheid3.jpg"", and various ""Foto"" timestamped images from 2023.
+
+All 141 images have geolocation data (GeoSPARQL geometry) attached to them.",
+2026-10-20T15:39:11+00:00,Evolomero,geolocated_images,qwen3-coder-next,OK,20.55,2,18940,1336,20276,1,mcp_Evolomero__query_knowledge_graph,1,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX this: <https://ld.openmicroscopy.org/omekg#> SELECT DISTINCT ?image_id ?image_name WHERE { # Find the Duisburg dataset ?dataset a core:Dataset ; rdfs:label ?dataset_name ; dc:identifier ?dataset_id . FILTER(LCASE(STR(?dataset_name)) = ""duisburg"") # Find images in this dataset ?image dcterms:isPartOf ?dataset ; dc:identifier ?image_id ; rdfs:label ?image_name . # Filter for geolocated images (those with geometry) ?image geo:hasGeometry ?geometry . }","I found 141 geolocated images in the Duisburg dataset. Here are their image IDs and names:
+
+| Image ID | Image Name |
+|----------|------------|
+| 351 | 00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg |
+| 352 | 017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg |
+| 353 | 04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg |
+| 354 | 0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg |
+| 355 | 0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg |
+| 356 | 0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg |
+| 357 | 100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg |
+| 358 | 11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg |
+| 359 | 1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg |
+| 360 | 19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg |
+| 361 | 19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg |
+| 362 | 1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg |
+| 363 | 1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg |
+| 364 | 1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg |
+| 381 | 2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg |
+| 382 | 2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg |
+| 383 | 30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg |
+| 384 | 30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg |
+| 385 | 34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg |
+
+... and 122 more geolocated images.
+
+The query found a total of 141 geolocated images in the Duisburg dataset.",
+2026-10-20T15:39:11+00:00,Evolomero,geolocated_images,qwen3.6-35b-a3b,OK,43.302,2,21325,3497,24822,1,mcp_Evolomero__query_knowledge_graph,1,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT DISTINCT ?image_id ?image_name WHERE { ?image a core:Image ; dcterms:isPartOf ?dataset ; geo:hasGeometry ?geometry ; dc:identifier ?image_id ; rdfs:label ?image_name . ?dataset rdfs:label ?dataset_name . FILTER(LCASE(STR(?dataset_name)) = LCASE(""Duisburg"")) }","
+
+The Duisburg dataset contains **141** geolocated images in total. Per benchmark guidelines, only the first 20 matching results are shown below:
+
+| Image ID | Image Name |
+|----------|------------|
+| 351 | 00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg |
+| 352 | 017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg |
+| 353 | 04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg |
+| 354 | 0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg |
+| 355 | 0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg |
+| 356 | 0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg |
+| 357 | 100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg |
+| 358 | 11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg |
+| 359 | 1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg |
+| 360 | 19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg |
+| 361 | 19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg |
+| 362 | 1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg |
+| 363 | 1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg |
+| 364 | 1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg |
+| 381 | 2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg |
+| 382 | 2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg |
+| 383 | 30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg |
+| 384 | 30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg |
+| 385 | 34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg |
+| 386 | 3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg |
+
+*Note: Only the first 20 of the 141 total matching results are displayed. All listed images are explicitly geolocated in the repository.*",
+2026-10-20T15:39:11+00:00,Evolomero,geolocated_counts,qwen3.5-397b-a17b,OK,8.291,2,5994,842,6836,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT ?dataset ?dataset_name (COUNT(DISTINCT ?image) AS ?geolocated_image_count) WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name ; dcterms:hasPart ?image . ?image a core:Image ; geo:hasGeometry ?geometry . } GROUP BY ?dataset ?dataset_name ORDER BY DESC(?geolocated_image_count),"
+
+Based on the query results, there are **3 datasets** that contain geolocated images in the Evolomero OMERO repository:
+
+| Dataset Name | Dataset ID | Geolocated Images |
+|--------------|------------|-------------------|
+| Duisburg | 151 | 141 |
+| check2 | 107 | 3 |
+| dataset1 | 105 | 2 |
+
+The **Duisburg** dataset contains by far the most geolocated images (141), while **check2** and **dataset1** contain 3 and 2 geolocated images respectively.",
+2026-10-20T15:39:11+00:00,Evolomero,geolocated_counts,qwen3-coder-next,OK,3.272,2,5352,409,5761,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX this: <https://ld.openmicroscopy.org/omekg#> SELECT DISTINCT ?dataset ?dataset_name (COUNT(DISTINCT ?image) AS ?geolocated_count) WHERE { ?dataset a core:Dataset ; dcterms:hasPart ?image . ?image geo:hasGeometry ?geometry . OPTIONAL { ?dataset rdfs:label ?dataset_name } } GROUP BY ?dataset ?dataset_name,"The datasets that contain geolocated images, along with the count of geolocated images in each, are:
+
+- **dataset1** (ID: 105): 2 geolocated images  
+- **check2** (ID: 107): 3 geolocated images  
+- **Duisburg** (ID: 151): 141 geolocated images  
+
+No additional datasets with geolocated images were found in the repository.",
+2026-10-20T15:39:11+00:00,Evolomero,geolocated_counts,qwen3.6-35b-a3b,OK,20.678,2,7459,2444,9903,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?dataset_name ?dataset_id (COUNT(DISTINCT ?image) AS ?geolocated_image_count) WHERE { ?image a core:Image ; geo:hasGeometry/geo:asWKT ?wkt ; dcterms:isPartOf ?dataset . ?dataset a core:Dataset ; dc:identifier ?dataset_id ; rdfs:label ?dataset_name . } GROUP BY ?dataset ?dataset_name ?dataset_id ORDER BY DESC(?geolocated_image_count),"
+
+Based on the knowledge graph, **3 datasets** contain geolocated images. Here are the details for each:
+
+| Dataset Name | OMERO ID | Geolocated Images |
+|--------------|----------|-------------------|
+| Duisburg     | 151      | 141               |
+| check2       | 107      | 3                 |
+| dataset1     | 105      | 2                 |
+
+These datasets are listed in descending order by the number of geolocated images they contain. Let me know if you need further details about any specific dataset or its images!",
+2026-10-20T15:47:27+00:00,Evolomero,geolocated_images,qwen3.5-397b-a17b,OK,46.593,2,21073,2136,23209,1,mcp_Evolomero__query_knowledge_graph,1,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT DISTINCT ?image_id ?image_name WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name ; dcterms:hasPart ?image . ?image a core:Image ; dc:identifier ?image_id ; rdfs:label ?image_name ; geo:hasGeometry ?geometry . FILTER(LCASE(STR(?dataset_name)) = LCASE(""Duisburg"")) }","
+
+The query found **141 geolocated images** belonging to the Duisburg dataset. Here are their image IDs and names:
+
+| Image ID | Image Name |
+|----------|------------|
+| 351 | 00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg |
+| 352 | 017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg |
+| 353 | 04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg |
+| 354 | 0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg |
+| 355 | 0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg |
+| 356 | 0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg |
+| 357 | 100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg |
+| 358 | 11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg |
+| 359 | 1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg |
+| 360 | 19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg |
+| 361 | 19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg |
+| 362 | 1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg |
+| 363 | 1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg |
+| 364 | 1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg |
+| 381 | 2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg |
+| 382 | 2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg |
+| 383 | 30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg |
+| 384 | 30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg |
+| 385 | 34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg |
+| 386 | 3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg |
+| ... | ... (121 more images) |
+| 603 | Rüttenscheid3.jpg |
+| 604 | Typography_636387AC-27D9-49D1-87BD-684DCAD82FC7_1_105_c.jpeg |
+
+**Summary:**
+- **Total geolocated images:** 141
+- **Image ID range:** 351–604 (with some gaps)
+- **Name patterns:** Most images follow UUID-based naming conventions (e.g., `XXXX_1_105_c.jpeg`), with some exceptions like ""Am Porschepl.jpg"", ""Bochold1.jpg"", ""Rüttenscheid3.jpg"", and timestamped ""Foto"" images from 2023.
+
+All 141 images have associated geolocation data (GeoSPARQL geometry) and belong to the Duisburg dataset.",
+2026-10-20T15:47:27+00:00,Evolomero,geolocated_images,qwen3-coder-next,OK,22.719,8,58531,2788,61319,7,mcp_Evolomero__query_knowledge_graph; mcp_Evolomero__query_knowledge_graph; mcp_Evolomero__query_knowledge_graph; mcp_Evolomero__query_knowledge_graph; mcp_Evolomero__query_knowledge_graph; mcp_Evolomero__query_knowledge_graph; mcp_Evolomero__query_knowledge_graph,7,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT DISTINCT ?image_id ?image_name WHERE { # Find the Duisburg dataset ?dataset a core:Dataset ; rdfs:label ?dataset_name ; dc:identifier ?dataset_id . FILTER(LCASE(STR(?dataset_name)) = ""duisburg"") # Find images that belong to this dataset ?image dcterms:isPartOf ?dataset ; dc:identifier ?image_id ; rdfs:label ?image_name . # Filter for images that have geolocation data ?image geo:hasGeometry ?geometry . } || PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT DISTINCT ?dataset_id ?dataset_name WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name ; dc:identifier ?dataset_id . FILTER(LCASE(STR(?dataset_name)) = ""duisburg"") } || PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT DISTINCT ?image_id ?image_name WHERE { # Find the Duisburg datasets ?dataset a core:Dataset ; rdfs:label ""Duisburg"" ; dc:identifier ?dataset_id . # Find images that belong to these datasets ?image dcterms:isPartOf ?dataset ; dc:identifier ?image_id ; rdfs:label ?image_name . # Filter for images that have geolocation data ?image geo:hasGeometry ?geometry . } || PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT ?image_id ?image_name ?dataset_name WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name ; dc:identifier ?dataset_id . ?image dcterms:isPartOf ?dataset ; dc:identifier ?image_id ; rdfs:label ?image_name . ?image geo:hasGeometry ?geometry . } LIMIT 5 || PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT ?image_id ?image_name WHERE { ?image a core:Image ; dc:identifier ?image_id ; rdfs:label ?image_name . ?image geo:hasGeometry ?geometry . } LIMIT 5 || PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX dcterms: <http://purl.org/dc/terms/> SELECT ?image_id ?image_name WHERE { # Find datasets named Duisburg ?dataset rdfs:label ?dataset_name . FILTER(LCASE(STR(?dataset_name)) = ""duisburg"") # Get images in these datasets ?image dcterms:isPartOf ?dataset . # Filter for geolocated images ?image geo:hasGeometry ?geometry . ?image dc:identifier ?image_id ; rdfs:label ?image_name . } || PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX dcterms: <http://purl.org/dc/terms/> SELECT DISTINCT ?image_id ?image_name WHERE { # Find datasets named Duisburg ?dataset rdfs:label ?dataset_name . FILTER(LCASE(STR(?dataset_name)) = ""duisburg"") # Get images in these datasets ?image dcterms:isPartOf ?dataset . # Filter for geolocated images ?image geo:hasGeometry ?geometry . ?image dc:identifier ?image_id ; rdfs:label ?image_name . } LIMIT 20","There are 141 geolocated images in the Duisburg datasets (there are two datasets named ""Duisburg"" with IDs 151 and 201). Below are the first 20 geolocated images:
+
+**Geolocated images in the Duisburg dataset:**
+
+| Image ID | Image Name |
+|----------|------------|
+| 351 | 00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg |
+| 352 | 017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg |
+| 353 | 04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg |
+| 354 | 0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg |
+| 355 | 0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg |
+| 356 | 0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg |
+| 357 | 100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg |
+| 358 | 11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg |
+| 359 | 1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg |
+| 360 | 19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg |
+| 361 | 19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg |
+| 362 | 1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg |
+| 363 | 1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg |
+| 364 | 1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg |
+| 381 | 2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg |
+| 382 | 2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg |
+| 383 | 30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg |
+| 384 | 30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg |
+| 385 | 34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg |
+| 386 | 3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg |
+
+Note: This is a limited view of the first 20 images out of 141 total geolocated images in the Duisburg datasets.",
+2026-10-20T15:47:27+00:00,Evolomero,geolocated_images,qwen3.6-35b-a3b,OK,65.114,2,22560,8479,31039,1,mcp_Evolomero__query_knowledge_graph,1,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT DISTINCT ?image_id ?image_name WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name . FILTER(LCASE(STR(?dataset_name)) = LCASE(""Duisburg"")) ?image a core:Image ; dcterms:isPartOf ?dataset ; dc:identifier ?image_id ; rdfs:label ?image_name . ?image geo:hasGeometry ?geometry . }","
+
+Based on the query results, there are **141 geolocated images** in the Duisburg dataset. Here are their OMERO IDs and names:
+
+| Image ID | Image Name |
+|----------|------------|
+| 351 | 00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg |
+| 352 | 017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg |
+| 353 | 04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg |
+| 354 | 0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg |
+| 355 | 0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg |
+| 356 | 0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg |
+| 357 | 100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg |
+| 358 | 11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg |
+| 359 | 1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg |
+| 360 | 19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg |
+| 361 | 19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg |
+| 362 | 1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg |
+| 363 | 1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg |
+| 364 | 1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg |
+| 381 | 2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg |
+| 382 | 2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg |
+| 383 | 30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg |
+| 384 | 30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg |
+| 385 | 34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg |
+| 386 | 3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg |
+| 387 | 36E04796-7CE2-44E2-BE1C-4DB35DBEAE5E_1_105_c.jpeg |
+| 388 | 37375D2F-0E15-4586-9DD3-92727DFE0B8D_1_105_c.jpeg |
+| 389 | 38857BF5-0901-44CB-B18A-E8EB1FA53A8A_1_105_c.jpeg |
+| 390 | 3B7A3DD8-FCAA-48F6-99C1-0CBAFCA7BA07_1_105_c.jpeg |
+| 391 | 3EF54821-D23C-460C-B38B-AD70D55412EF_1_105_c.jpeg |
+| 392 | 4CF76F4C-032F-4715-9644-13E0EBA731A8_1_105_c.jpeg |
+| 393 | 4D062BB1-15BF-47BE-9913-BB49B11A0D9D_1_105_c.jpeg |
+| 394 | 54C0E398-CAB6-4612-B81A-88764297ED56_1_105_c.jpeg |
+| 395 | 58A68E35-F083-41A4-8897-2925D3F4D4D2_1_105_c.jpeg |
+| 396 | 5AEC5A4F-2ADB-4ACA-B066-894AEFC4B041_1_105_c.jpeg |
+| 397 | 5C20177D-9BC7-421C-9D66-7F4B5B02FFC5_1_105_c.jpeg |
+| 398 | 5E2CF538-3572-48F8-9AFC-5A6D21F93BAB_1_105_c.jpeg |
+| 399 | 5EC5556F-7B8A-4797-96DB-602DD016EE8F_1_105_c.jpeg |
+| 400 | 60EC7F2A-DDE2-4CE9-83EA-C9D964DEF498_1_105_c.jpeg |
+| 401 | 688D195C-D18B-463D-A77F-A24A6326FBC6_1_105_c.jpeg |
+| 402 | 7551CEDA-F8DD-4484-9616-7DE557F0A29C_1_105_c.jpeg |
+| 403 | 866023BE-60A2-4B1A-BB5E-C36B4FC88DB6_1_105_c.jpeg |
+| 404 | 866DF46F-EB93-4953-B620-DF12A410F130_1_105_c.jpeg |
+| 405 | 8DD17EA5-FDDA-4E4C-B683-355B3779AC75_1_105_c.jpeg |
+| 407 | A3074E10-3107-4B9A-B68F-C7AE1A71AAB7_1_105_c.jpeg |
+| 408 | A5F2A569-5CEC-4403-B5AC-2B9D0E0DC633_1_105_c.jpeg |
+| 409 | A7873A93-607D-4EA9-ACA7-A54C50BDEDF4_1_105_c.jpeg |
+| 410 | A7D2880A-5907-4380-8F84-852D3E20C800_1_105_c.jpeg |
+| 411 | A82470C6-4C97-45EA-ABBD-59F81D636D12_1_105_c.jpeg |
+| 412 | AFA881E4-7FAA-41AB-A79B-7AD41B52E15F_1_105_c.jpeg |
+| 413 | AFEAEA5C-18CF-44F7-802A-4B6AD0DC35BE_1_105_c.jpeg |
+| 416 | Am Porschepl.jpg |
+| 417 | B4B031E4-5976-47EE-BE37-5D407BF984AF_1_105_c.jpeg |
+| 418 | B5469B2F-3875-4876-B633-FF942B182151_1_105_c.jpeg |
+| 419 | B5D81842-9B4C-4176-BDDF-28C53A0245C8_1_105_c.jpeg |
+| 420 | B60DE2FD-4FF6-404E-9AD0-705E37CFB577_1_105_c.jpeg |
+| 421 | B83D2C02-E677-41BD-B8B0-878963DD487E_1_105_c.jpeg |
+| 422 | BC906EF2-8966-4BFE-B09C-B94266EA7AFA_1_105_c.jpeg |
+| 423 | BF8110A3-76BF-4A1F-BD8F-FC8FFB25D833_1_105_c.jpeg |
+| 426 | Bochold1.jpg |
+| 427 | Bochold6.jpg |
+| 428 | CAEBEC8C-FECA-48CE-8C6E-6DB5010C98F7_1_105_c.jpeg |
+| 429 | CBAD435B-F2CD-4346-9D38-CF8A9ED06D53_1_105_c.jpeg |
+| 430 | CD39447F-00B8-407D-802E-4B5672F77593_1_105_c.jpeg |
+| 431 | D2677CBA-57AA-4DC3-A824-EE26BE5E99B7_1_105_c.jpeg |
+| 432 | D2962BDF-E601-4279-8444-683603EA1B85_1_105_c.jpeg |
+| 433 | D32F0632-5823-4395-A6CD-BB92B2D6C043_1_105_c.jpeg |
+| 434 | D338FED1-8373-43FA-8149-3A8E04ECCAE7_1_105_c.jpeg |
+| 435 | D3BF7672-5C4A-48FB-B074-E8EF5AC64EC2_1_105_c.jpeg |
+| 436 | D86CF277-5617-4FF0-B8D4-AF48C3479489_1_105_c.jpeg |
+| 437 | D900B9F6-C0A0-49DD-92CD-30156EA9BA64_1_105_c.jpeg |
+| 438 | DA366BE7-0783-4DAE-B423-CB63F31127DE_1_105_c.jpeg |
+| 439 | DB8F02AD-538E-439A-B5A9-3057A09714FA_1_105_c.jpeg |
+| 441 | E08A39E8-C1CA-4DCD-877A-36FC623DBEB7_1_105_c.jpeg |
+| 442 | EE5DFCCB-29CD-47E8-B0DD-85FFEFE79BB1_1_105_c.jpeg |
+| 444 | FBA29E0E-ABFB-4AB8-999C-448B4DF99DBD_1_105_c.jpeg |
+| 445 | FF3FEDF0-7AE6-4E3C-ADE1-A79BA24C372C_1_105_c.jpeg |
+| 446 | Foto 01.08.23, 11 38 29.jpg |
+| 447 | Foto 01.08.23, 11 40 54.jpg |
+| 448 | Foto 01.08.23, 11 43 42.jpg |
+| 449 | Foto 01.08.23, 11 43 50.jpg |
+| 450 | Foto 01.08.23, 11 45 17.jpg |
+| 451 | Foto 01.08.23, 11 49 44.jpg |
+| 452 | Foto 01.08.23, 11 54 50.jpg |
+| 453 | Foto 01.08.23, 12 04 22.jpg |
+| 454 | Foto 01.08.23, 12 04 49.jpg |
+| 455 | Foto 01.08.23, 12 06 23.jpg |
+| 456 | Foto 01.08.23, 12 07 04.jpg |
+| 457 | Foto 01.08.23, 12 07 09.jpg |
+| 458 | Foto 01.08.23, 12 07 13.jpg |
+| 459 | Foto 01.08.23, 12 07 17.jpg |
+| 460 | Foto 01.08.23, 12 07 22.jpg |
+| 461 | Foto 01.08.23, 12 23 34.jpg |
+| 462 | Foto 01.08.23, 13 10 29.jpg |
+| 463 | Foto 01.08.23, 13 10 51.jpg |
+| 464 | Foto 01.08.23, 13 13 35.jpg |
+| 465 | Foto 01.08.23, 13 14 27.jpg |
+| 466 | Foto 01.08.23, 13 18 05.jpg |
+| 467 | Foto 01.08.23, 13 24 49.jpg |
+| 468 | Foto 01.08.23, 13 25 55.jpg |
+| 469 | Foto 01.08.23, 13 26 42.jpg |
+| 470 | Foto 01.08.23, 13 26 46.jpg |
+| 471 | Foto 01.08.23, 13 26 47.jpg |
+| 472 | Foto 01.08.23, 13 26 58.jpg |
+| 473 | Foto 01.08.23, 13 27 07.jpg |
+| 474 | Foto 01.08.23, 13 27 10.jpg |
+| 475 | Foto 01.08.23, 13 28 15.jpg |
+| 476 | Foto 01.08.23, 13 28 38.jpg |
+| 477 | Foto 01.08.23, 13 29 14.jpg |
+| 478 | Foto 01.08.23, 13 29 50.jpg |
+| 479 | Foto 01.08.23, 13 29 53.jpg |
+| 480 | Foto 01.08.23, 13 30 14.jpg |
+| 481 | Foto 01.08.23, 13 30 16.jpg |
+| 482 | Foto 01.08.23, 13 30 17.jpg |
+| 483 | Foto 01.08.23, 13 30 23.jpg |
+| 484 | Foto 01.08.23, 13 30 36.jpg |
+| 485 | Foto 01.08.23, 13 30 38.jpg |
+| 486 | Foto 01.08.23, 13 30 39.jpg |
+| 487 | Foto 01.08.23, 13 31 07.jpg |
+| 488 | Foto 01.08.23, 13 31 20.jpg |
+| 489 | Foto 01.08.23, 13 31 41.jpg |
+| 490 | Foto 01.08.23, 13 32 12.jpg |
+| 491 | Foto 01.08.23, 13 32 17.jpg |
+| 492 | Foto 01.08.23, 13 34 56.jpg |
+| 493 | Foto 01.08.23, 13 35 01.jpg |
+| 494 | Foto 01.08.23, 13 35 17.jpg |
+| 495 | Foto 01.08.23, 13 37 53.jpg |
+| 496 | Foto 14.04.23, 09 40 05.jpg |
+| 497 | Foto 16.07.23, 12 12 00.jpg |
+| 498 | Foto 16.07.23, 12 19 28.jpg |
+| 499 | Foto 16.07.23, 12 27 26.jpg |
+| 500 | Foto 19.05.23, 14 39 35.jpg |
+| 501 | Foto 19.05.23, 14 53 03.jpg |
+| 502 | Foto 19.05.23, 14 58 09.jpg |
+| 503 | Foto 19.05.23, 15 01 28.jpg |
+| 504 | Foto 21.04.23, 13 30 29.jpg |
+| 509 | IMG_20220722_144025.jpg |
+| 510 | IMG_20221007_133137_hdr.jpg |
+| 511 | IMG_20230331_124632(1).jpg |
+| 518 | IMG_20230930_161531(1).jpg |
+| 519 | IMG_20231012_154950_hdr.jpg |
+| 533 | IMG_6035.jpeg |
+| 541 | IMG_6291.jpeg |
+| 542 | IMG_6294.jpeg |
+| 603 | Rüttenscheid3.jpg |
+| 604 | Typography_636387AC-27D9-49D1-87BD-684DCAD82FC7_1_105_c.jpeg |
+
+*(Total: 141 geolocated images)*",
+2026-10-20T15:47:27+00:00,Evolomero,geolocated_counts,qwen3.5-397b-a17b,OK,9.506,2,6163,837,7000,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT ?dataset ?dataset_name ?dataset_id (COUNT(DISTINCT ?image) AS ?geolocated_image_count) WHERE { ?dataset a core:Dataset ; dcterms:hasPart ?image ; rdfs:label ?dataset_name ; dc:identifier ?dataset_id . ?image a core:Image ; geo:hasGeometry ?geometry . } GROUP BY ?dataset ?dataset_name ?dataset_id ORDER BY ?dataset_name,"
+
+Based on the query results, **3 datasets** in the Evolomero OMERO repository contain geolocated images:
+
+| Dataset Name | Dataset ID | Geolocated Images |
+|--------------|------------|-------------------|
+| check2 | 107 | 3 |
+| dataset1 | 105 | 2 |
+| Duisburg | 151 | 141 |
+
+The ""Duisburg"" dataset contains the majority of geolocated images (141), while ""check2"" and ""dataset1"" contain 3 and 2 geolocated images respectively.",
+2026-10-20T15:47:27+00:00,Evolomero,geolocated_counts,qwen3-coder-next,OK,3.151,2,5341,397,5738,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT DISTINCT ?dataset ?dataset_name (COUNT(DISTINCT ?image) AS ?geolocated_image_count) WHERE { ?image a core:Image ; geo:hasGeometry/geo:asWKT ?wkt . ?dataset dcterms:hasPart ?image . ?dataset rdfs:label ?dataset_name . } GROUP BY ?dataset ?dataset_name ORDER BY DESC(?geolocated_image_count) LIMIT 20,"Based on the query results, here are the datasets containing geolocated images and their counts:
+
+1. **Duisburg** - 141 geolocated images
+2. **check2** - 3 geolocated images
+3. **dataset1** - 2 geolocated images
+
+The results show that the ""Duisburg"" dataset contains by far the most geolocated images, with 141 images, while the other two datasets contain only a small number each.",
+2026-10-20T15:47:27+00:00,Evolomero,geolocated_counts,qwen3.6-35b-a3b,OK,83.023,2,7809,2929,10738,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?dataset ?dataset_name (COUNT(DISTINCT ?image) AS ?geolocated_image_count) WHERE { ?image a core:Image ; geo:hasGeometry ?geometry ; dcterms:isPartOf ?dataset . ?dataset a core:Dataset ; rdfs:label ?dataset_name . } GROUP BY ?dataset ?dataset_name ORDER BY DESC(?geolocated_image_count),"
+
+Based on the query results, the following datasets contain geolocated images:
+
+| Dataset Name | OMERO ID | Geolocated Image Count |
+|--------------|----------|------------------------|
+| Duisburg     | 151      | 141                    |
+| check2       | 107      | 3                      |
+| dataset1     | 105      | 2                      |
+
+These are all the datasets in the repository that contain at least one image with geospatial metadata. The counts reflect the total number of images linked to each dataset that have an associated `geo:hasGeometry` annotation.",
+2026-10-20T16:00:41+00:00,Evolomero,geolocated_images,qwen3.5-397b-a17b,OK,22.117,2,8056,1862,9918,1,mcp_Evolomero__query_knowledge_graph,1,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT DISTINCT ?image_id ?image_name WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name ; dcterms:hasPart ?image . FILTER(LCASE(STR(?dataset_name)) = LCASE(""Duisburg"")) ?image a core:Image ; dc:identifier ?image_id ; rdfs:label ?image_name ; geo:hasGeometry ?geometry . } LIMIT 20","
+
+I found **20 geolocated images** belonging to the Duisburg dataset. Here are their image IDs and names:
+
+| Image ID | Image Name |
+|----------|------------|
+| 351 | 00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg |
+| 352 | 017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg |
+| 353 | 04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg |
+| 354 | 0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg |
+| 355 | 0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg |
+| 356 | 0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg |
+| 357 | 100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg |
+| 358 | 11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg |
+| 359 | 1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg |
+| 360 | 19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg |
+| 361 | 19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg |
+| 362 | 1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg |
+| 363 | 1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg |
+| 364 | 1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg |
+| 381 | 2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg |
+| 382 | 2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg |
+| 383 | 30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg |
+| 384 | 30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg |
+| 385 | 34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg |
+| 386 | 3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg |
+
+These are the first 20 matching results. All of these images have geolocation data (GeoSPARQL geometry) and belong to the Duisburg dataset.",
+2026-10-20T16:00:41+00:00,Evolomero,geolocated_images,qwen3-coder-next,OK,9.706,2,18802,1255,20057,1,mcp_Evolomero__query_knowledge_graph,1,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX this: <https://ld.openmicroscopy.org/omekg#> SELECT DISTINCT ?image_id ?image_name WHERE { ?dataset rdfs:label ""Duisburg"" . ?image dcterms:isPartOf ?dataset . ?image a core:Image . ?image dc:identifier ?image_id . ?image rdfs:label ?image_name . ?image geo:hasGeometry ?geometry . }","The geolocated images belonging to the Duisburg dataset are as follows. Only the first 20 results are shown below due to the default limit; the full query returned 141 results.
+
+| Image ID | Image Name |
+|----------|------------|
+| 351 | 00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg |
+| 352 | 017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg |
+| 353 | 04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg |
+| 354 | 0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg |
+| 355 | 0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg |
+| 356 | 0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg |
+| 357 | 100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg |
+| 358 | 11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg |
+| 359 | 1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg |
+| 360 | 19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg |
+| 361 | 19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg |
+| 362 | 1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg |
+| 363 | 1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg |
+| 364 | 1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg |
+| 381 | 2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg |
+| 382 | 2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg |
+| 383 | 30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg |
+| 384 | 30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg |
+| 385 | 34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg |
+| 386 | 3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg |
+
+The complete list includes 141 images in total. Let me know if you'd like the full list.",
+2026-10-20T16:00:41+00:00,Evolomero,geolocated_images,qwen3.6-35b-a3b,OK,89.944,2,31078,7114,38192,1,mcp_Evolomero__query_knowledge_graph,1,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT DISTINCT ?image_id ?image_name ?wkt WHERE { ?dataset a core:Dataset ; rdfs:label ""Duisburg"" . ?image a core:Image ; dcterms:isPartOf ?dataset ; dc:identifier ?image_id ; rdfs:label ?image_name . ?image geo:hasGeometry ?geometry . ?geometry geo:asWKT ?wkt . }","
+
+The Duisburg dataset contains **141 geolocated images**. Here are their OMERO image IDs and names:
+
+| Image ID | Image Name |
+|:---|:---|
+| 351 | `00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg` |
+| 352 | `017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg` |
+| 353 | `04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg` |
+| 354 | `0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg` |
+| 355 | `0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg` |
+| 356 | `0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg` |
+| 357 | `100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg` |
+| 358 | `11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg` |
+| 359 | `1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg` |
+| 360 | `19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg` |
+| 361 | `19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg` |
+| 362 | `1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg` |
+| 363 | `1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg` |
+| 364 | `1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg` |
+| 381 | `2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg` |
+| 382 | `2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg` |
+| 383 | `30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg` |
+| 384 | `30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg` |
+| 385 | `34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg` |
+| 386 | `3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg` |
+| 387 | `36E04796-7CE2-44E2-BE1C-4DB35DBEAE5E_1_105_c.jpeg` |
+| 388 | `37375D2F-0E15-4586-9DD3-92727DFE0B8D_1_105_c.jpeg` |
+| 389 | `38857BF5-0901-44CB-B18A-E8EB1FA53A8A_1_105_c.jpeg` |
+| 390 | `3B7A3DD8-FCAA-48F6-99C1-0CBAFCA7BA07_1_105_c.jpeg` |
+| 391 | `3EF54821-D23C-460C-B38B-AD70D55412EF_1_105_c.jpeg` |
+| 392 | `4CF76F4C-032F-4715-9644-13E0EBA731A8_1_105_c.jpeg` |
+| 393 | `4D062BB1-15BF-47BE-9913-BB49B11A0D9D_1_105_c.jpeg` |
+| 394 | `54C0E398-CAB6-4612-B81A-88764297ED56_1_105_c.jpeg` |
+| 395 | `58A68E35-F083-41A4-8897-2925D3F4D4D2_1_105_c.jpeg` |
+| 396 | `5AEC5A4F-2ADB-4ACA-B066-894AEFC4B041_1_105_c.jpeg` |
+| 397 | `5C20177D-9BC7-421C-9D66-7F4B5B02FFC5_1_105_c.jpeg` |
+| 398 | `5E2CF538-3572-48F8-9AFC-5A6D21F93BAB_1_105_c.jpeg` |
+| 399 | `5EC5556F-7B8A-4797-96DB-602DD016EE8F_1_105_c.jpeg` |
+| 400 | `60EC7F2A-DDE2-4CE9-83EA-C9D964DEF498_1_105_c.jpeg` |
+| 401 | `688D195C-D18B-463D-A77F-A24A6326FBC6_1_105_c.jpeg` |
+| 402 | `7551CEDA-F8DD-4484-9616-7DE557F0A29C_1_105_c.jpeg` |
+| 403 | `866023BE-60A2-4B1A-BB5E-C36B4FC88DB6_1_105_c.jpeg` |
+| 404 | `866DF46F-EB93-4953-B620-DF12A410F130_1_105_c.jpeg` |
+| 405 | `8DD17EA5-FDDA-4E4C-B683-355B3779AC75_1_105_c.jpeg` |
+| 407 | `A3074E10-3107-4B9A-B68F-C7AE1A71AAB7_1_105_c.jpeg` |
+| 408 | `A5F2A569-5CEC-4403-B5AC-2B9D0E0DC633_1_105_c.jpeg` |
+| 409 | `A7873A93-607D-4EA9-ACA7-A54C50BDEDF4_1_105_c.jpeg` |
+| 410 | `A7D2880A-5907-4380-8F84-852D3E20C800_1_105_c.jpeg` |
+| 411 | `A82470C6-4C97-45EA-ABBD-59F81D636D12_1_105_c.jpeg` |
+| 412 | `AFA881E4-7FAA-41AB-A79B-7AD41B52E15F_1_105_c.jpeg` |
+| 413 | `AFEAEA5C-18CF-44F7-802A-4B6AD0DC35BE_1_105_c.jpeg` |
+| 416 | `Am Porschepl.jpg` |
+| 417 | `B4B031E4-5976-47EE-BE37-5D407BF984AF_1_105_c.jpeg` |
+| 418 | `B5469B2F-3875-4876-B633-FF942B182151_1_105_c.jpeg` |
+| 419 | `B5D81842-9B4C-4176-BDDF-28C53A0245C8_1_105_c.jpeg` |
+| 420 | `B60DE2FD-4FF6-404E-9AD0-705E37CFB577_1_105_c.jpeg` |
+| 421 | `B83D2C02-E677-41BD-B8B0-878963DD487E_1_105_c.jpeg` |
+| 422 | `BC906EF2-8966-4BFE-B09C-B94266EA7AFA_1_105_c.jpeg` |
+| 423 | `BF8110A3-76BF-4A1F-BD8F-FC8FFB25D833_1_105_c.jpeg` |
+| 426 | `Bochold1.jpg` |
+| 427 | `Bochold6.jpg` |
+| 428 | `CAEBEC8C-FECA-48CE-8C6E-6DB5010C98F7_1_105_c.jpeg` |
+| 429 | `CBAD435B-F2CD-4346-9D38-CF8A9ED06D53_1_105_c.jpeg` |
+| 430 | `CD39447F-00B8-407D-802E-4B5672F77593_1_105_c.jpeg` |
+| 431 | `D2677CBA-57AA-4DC3-A824-EE26BE5E99B7_1_105_c.jpeg` |
+| 432 | `D2962BDF-E601-4279-8444-683603EA1B85_1_105_c.jpeg` |
+| 433 | `D32F0632-5823-4395-A6CD-BB92B2D6C043_1_105_c.jpeg` |
+| 434 | `D338FED1-8373-43FA-8149-3A8E04ECCAE7_1_105_c.jpeg` |
+| 435 | `D3BF7672-5C4A-48FB-B074-E8EF5AC64EC2_1_105_c.jpeg` |
+| 436 | `D86CF277-5617-4FF0-B8D4-AF48C3479489_1_105_c.jpeg` |
+| 437 | `D900B9F6-C0A0-49DD-92CD-30156EA9BA64_1_105_c.jpeg` |
+| 438 | `DA366BE7-0783-4DAE-B423-CB63F31127DE_1_105_c.jpeg` |
+| 439 | `DB8F02AD-538E-439A-B5A9-3057A09714FA_1_105_c.jpeg` |
+| 441 | `E08A39E8-C1CA-4DCD-877A-36FC623DBEB7_1_105_c.jpeg` |
+| 442 | `EE5DFCCB-29CD-47E8-B0DD-85FFEFE79BB1_1_105_c.jpeg` |
+| 444 | `FBA29E0E-ABFB-4AB8-999C-448B4DF99DBD_1_105_c.jpeg` |
+| 445 | `FF3FEDF0-7AE6-4E3C-ADE1-A79BA24C372C_1_105_c.jpeg` |
+| 446 | `Foto 01.08.23, 11 38 29.jpg` |
+| 447 | `Foto 01.08.23, 11 40 54.jpg` |
+| 448 | `Foto 01.08.23, 11 43 42.jpg` |
+| 449 | `Foto 01.08.23, 11 43 50.jpg` |
+| 450 | `Foto 01.08.23, 11 45 17.jpg` |
+| 451 | `Foto 01.08.23, 11 49 44.jpg` |
+| 452 | `Foto 01.08.23, 11 54 50.jpg` |
+| 453 | `Foto 01.08.23, 12 04 22.jpg` |
+| 454 | `Foto 01.08.23, 12 04 49.jpg` |
+| 455 | `Foto 01.08.23, 12 06 23.jpg` |
+| 456 | `Foto 01.08.23, 12 07 04.jpg` |
+| 457 | `Foto 01.08.23, 12 07 09.jpg` |
+| 458 | `Foto 01.08.23, 12 07 13.jpg` |
+| 459 | `Foto 01.08.23, 12 07 17.jpg` |
+| 460 | `Foto 01.08.23, 12 07 22.jpg` |
+| 461 | `Foto 01.08.23, 12 23 34.jpg` |
+| 462 | `Foto 01.08.23, 13 10 29.jpg` |
+| 463 | `Foto 01.08.23, 13 10 51.jpg` |
+| 464 | `Foto 01.08.23, 13 13 35.jpg` |
+| 465 | `Foto 01.08.23, 13 14 27.jpg` |
+| 466 | `Foto 01.08.23, 13 18 05.jpg` |
+| 467 | `Foto 01.08.23, 13 24 49.jpg` |
+| 468 | `Foto 01.08.23, 13 25 55.jpg` |
+| 469 | `Foto 01.08.23, 13 26 42.jpg` |
+| 470 | `Foto 01.08.23, 13 26 46.jpg` |
+| 471 | `Foto 01.08.23, 13 26 47.jpg` |
+| 472 | `Foto 01.08.23, 13 26 58.jpg` |
+| 473 | `Foto 01.08.23, 13 27 07.jpg` |
+| 474 | `Foto 01.08.23, 13 27 10.jpg` |
+| 475 | `Foto 01.08.23, 13 28 15.jpg` |
+| 476 | `Foto 01.08.23, 13 28 38.jpg` |
+| 477 | `Foto 01.08.23, 13 29 14.jpg` |
+| 478 | `Foto 01.08.23, 13 29 50.jpg` |
+| 479 | `Foto 01.08.23, 13 29 53.jpg` |
+| 480 | `Foto 01.08.23, 13 30 14.jpg` |
+| 481 | `Foto 01.08.23, 13 30 16.jpg` |
+| 482 | `Foto 01.08.23, 13 30 17.jpg` |
+| 483 | `Foto 01.08.23, 13 30 23.jpg` |
+| 484 | `Foto 01.08.23, 13 30 36.jpg` |
+| 485 | `Foto 01.08.23, 13 30 38.jpg` |
+| 486 | `Foto 01.08.23, 13 30 39.jpg` |
+| 487 | `Foto 01.08.23, 13 31 07.jpg` |
+| 488 | `Foto 01.08.23, 13 31 20.jpg` |
+| 489 | `Foto 01.08.23, 13 31 41.jpg` |
+| 490 | `Foto 01.08.23, 13 32 12.jpg` |
+| 491 | `Foto 01.08.23, 13 32 17.jpg` |
+| 492 | `Foto 01.08.23, 13 34 56.jpg` |
+| 493 | `Foto 01.08.23, 13 35 01.jpg` |
+| 494 | `Foto 01.08.23, 13 35 17.jpg` |
+| 495 | `Foto 01.08.23, 13 37 53.jpg` |
+| 496 | `Foto 14.04.23, 09 40 05.jpg` |
+| 497 | `Foto 16.07.23, 12 12 00.jpg` |
+| 498 | `Foto 16.07.23, 12 19 28.jpg` |
+| 499 | `Foto 16.07.23, 12 27 26.jpg` |
+| 500 | `Foto 19.05.23, 14 39 35.jpg` |
+| 501 | `Foto 19.05.23, 14 53 03.jpg` |
+| 502 | `Foto 19.05.23, 14 58 09.jpg` |
+| 503 | `Foto 19.05.23, 15 01 28.jpg` |
+| 504 | `Foto 21.04.23, 13 30 29.jpg` |
+| 509 | `IMG_20220722_144025.jpg` |
+| 510 | `IMG_20221007_133137_hdr.jpg` |
+| 511 | `IMG_20230331_124632(1).jpg` |
+| 518 | `IMG_20230930_161531(1).jpg` |
+| 519 | `IMG_20231012_154950_hdr.jpg` |
+| 533 | `IMG_6035.jpeg` |
+| 541 | `IMG_6291.jpeg` |
+| 542 | `IMG_6294.jpeg` |
+| 603 | `Rüttenscheid3.jpg` |
+| 604 | `Typography_636387AC-27D9-49D1-87BD-684DCAD82FC7_1_105_c.jpeg` |
+
+All listed images are associated with the Duisburg dataset and have explicit geolocation coordinates (WKT POINT) attached to them in the knowledge graph.",
+2026-10-20T16:00:41+00:00,Evolomero,geolocated_counts,qwen3.5-397b-a17b,OK,7.193,2,5861,784,6645,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT ?dataset_name (COUNT(DISTINCT ?image) AS ?geolocated_image_count) WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name ; dcterms:hasPart ?image . ?image a core:Image ; geo:hasGeometry ?geometry . } GROUP BY ?dataset_name ORDER BY DESC(?geolocated_image_count),"
+
+Based on the query results, **3 datasets** in the repository contain geolocated images:
+
+| Dataset | Number of Geolocated Images |
+|---------|-----------------------------|
+| Duisburg | 141 |
+| check2 | 3 |
+| dataset1 | 2 |
+
+The ""Duisburg"" dataset contains the vast majority of geolocated images (141), while ""check2"" and ""dataset1"" contain only 3 and 2 geolocated images respectively.",
+2026-10-20T16:00:41+00:00,Evolomero,geolocated_counts,qwen3-coder-next,OK,2.729,2,5255,272,5527,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT DISTINCT ?dataset ?dataset_name (COUNT(DISTINCT ?image) AS ?geolocated_count) WHERE { ?dataset a core:Dataset . ?dataset dcterms:hasPart ?image . ?image a core:Image . ?image geo:hasGeometry ?geometry . OPTIONAL { ?dataset rdfs:label ?dataset_name . } } GROUP BY ?dataset ?dataset_name,"The datasets that contain geolocated images, along with the count of geolocated images in each, are:
+
+- **dataset1**: 2 geolocated images
+- **check2**: 3 geolocated images
+- **Duisburg**: 141 geolocated images",
+2026-10-20T16:00:41+00:00,Evolomero,geolocated_counts,qwen3.6-35b-a3b,OK,11.165,2,6718,1741,8459,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?dataset_id ?dataset_name (COUNT(DISTINCT ?image) AS ?geolocated_image_count) WHERE { ?dataset a core:Dataset ; dc:identifier ?dataset_id . ?dataset dcterms:hasPart ?image . ?image a core:Image . ?image geo:hasGeometry ?geometry . OPTIONAL { ?dataset rdfs:label ?dataset_name . } } GROUP BY ?dataset ?dataset_id ?dataset_name,"
+
+Based on the knowledge graph, there are **3 datasets** that contain geolocated images. Here is the breakdown by dataset:
+
+| Dataset Name | OMERO ID | Number of Geolocated Images |
+|--------------|----------|-----------------------------|
+| dataset1     | 105      | 2                           |
+| check2       | 107      | 3                           |
+| Duisburg     | 151      | 141                         |
+
+The ""Duisburg"" dataset contains the highest number of geolocated images (141), while ""check2"" has 3 and ""dataset1"" has 2.",
+2026-10-20T16:04:58+00:00,Evolomero,geolocated_images,qwen3.5-397b-a17b,OK,71.611,2,20875,6012,26887,1,mcp_Evolomero__query_knowledge_graph,1,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT DISTINCT ?image_id ?image_name WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name . FILTER(LCASE(STR(?dataset_name)) = LCASE(""Duisburg"")) ?image a core:Image ; dcterms:isPartOf ?dataset ; dc:identifier ?image_id ; rdfs:label ?image_name ; geo:hasGeometry ?geometry . }","
+
+There are **141 geolocated images** in the Duisburg dataset. Here are their image IDs and names:
+
+| Image ID | Image Name |
+|----------|------------|
+| 351 | 00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg |
+| 352 | 017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg |
+| 353 | 04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg |
+| 354 | 0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg |
+| 355 | 0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg |
+| 356 | 0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg |
+| 357 | 100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg |
+| 358 | 11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg |
+| 359 | 1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg |
+| 360 | 19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg |
+| 361 | 19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg |
+| 362 | 1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg |
+| 363 | 1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg |
+| 364 | 1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg |
+| 381 | 2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg |
+| 382 | 2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg |
+| 383 | 30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg |
+| 384 | 30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg |
+| 385 | 34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg |
+| 386 | 3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg |
+| 387 | 36E04796-7CE2-44E2-BE1C-4DB35DBEAE5E_1_105_c.jpeg |
+| 388 | 37375D2F-0E15-4586-9DD3-92727DFE0B8D_1_105_c.jpeg |
+| 389 | 38857BF5-0901-44CB-B18A-E8EB1FA53A8A_1_105_c.jpeg |
+| 390 | 3B7A3DD8-FCAA-48F6-99C1-0CBAFCA7BA07_1_105_c.jpeg |
+| 391 | 3EF54821-D23C-460C-B38B-AD70D55412EF_1_105_c.jpeg |
+| 392 | 4CF76F4C-032F-4715-9644-13E0EBA731A8_1_105_c.jpeg |
+| 393 | 4D062BB1-15BF-47BE-9913-BB49B11A0D9D_1_105_c.jpeg |
+| 394 | 54C0E398-CAB6-4612-B81A-88764297ED56_1_105_c.jpeg |
+| 395 | 58A68E35-F083-41A4-8897-2925D3F4D4D2_1_105_c.jpeg |
+| 396 | 5AEC5A4F-2ADB-4ACA-B066-894AEFC4B041_1_105_c.jpeg |
+| 397 | 5C20177D-9BC7-421C-9D66-7F4B5B02FFC5_1_105_c.jpeg |
+| 398 | 5E2CF538-3572-48F8-9AFC-5A6D21F93BAB_1_105_c.jpeg |
+| 399 | 5EC5556F-7B8A-4797-96DB-602DD016EE8F_1_105_c.jpeg |
+| 400 | 60EC7F2A-DDE2-4CE9-83EA-C9D964DEF498_1_105_c.jpeg |
+| 401 | 688D195C-D18B-463D-A77F-A24A6326FBC6_1_105_c.jpeg |
+| 402 | 7551CEDA-F8DD-4484-9616-7DE557F0A29C_1_105_c.jpeg |
+| 403 | 866023BE-60A2-4B1A-BB5E-C36B4FC88DB6_1_105_c.jpeg |
+| 404 | 866DF46F-EB93-4953-B620-DF12A410F130_1_105_c.jpeg |
+| 405 | 8DD17EA5-FDDA-4E4C-B683-355B3779AC75_1_105_c.jpeg |
+| 407 | A3074E10-3107-4B9A-B68F-C7AE1A71AAB7_1_105_c.jpeg |
+| 408 | A5F2A569-5CEC-4403-B5AC-2B9D0E0DC633_1_105_c.jpeg |
+| 409 | A7873A93-607D-4EA9-ACA7-A54C50BDEDF4_1_105_c.jpeg |
+| 410 | A7D2880A-5907-4380-8F84-852D3E20C800_1_105_c.jpeg |
+| 411 | A82470C6-4C97-45EA-ABBD-59F81D636D12_1_105_c.jpeg |
+| 412 | AFA881E4-7FAA-41AB-A79B-7AD41B52E15F_1_105_c.jpeg |
+| 413 | AFEAEA5C-18CF-44F7-802A-4B6AD0DC35BE_1_105_c.jpeg |
+| 416 | Am Porschepl.jpg |
+| 417 | B4B031E4-5976-47EE-BE37-5D407BF984AF_1_105_c.jpeg |
+| 418 | B5469B2F-3875-4876-B633-FF942B182151_1_105_c.jpeg |
+| 419 | B5D81842-9B4C-4176-BDDF-28C53A0245C8_1_105_c.jpeg |
+| 420 | B60DE2FD-4FF6-404E-9AD0-705E37CFB577_1_105_c.jpeg |
+| 421 | B83D2C02-E677-41BD-B8B0-878963DD487E_1_105_c.jpeg |
+| 422 | BC906EF2-8966-4BFE-B09C-B94266EA7AFA_1_105_c.jpeg |
+| 423 | BF8110A3-76BF-4A1F-BD8F-FC8FFB25D833_1_105_c.jpeg |
+| 426 | Bochold1.jpg |
+| 427 | Bochold6.jpg |
+| 428 | CAEBEC8C-FECA-48CE-8C6E-6DB5010C98F7_1_105_c.jpeg |
+| 429 | CBAD435B-F2CD-4346-9D38-CF8A9ED06D53_1_105_c.jpeg |
+| 430 | CD39447F-00B8-407D-802E-4B5672F77593_1_105_c.jpeg |
+| 431 | D2677CBA-57AA-4DC3-A824-EE26BE5E99B7_1_105_c.jpeg |
+| 432 | D2962BDF-E601-4279-8444-683603EA1B85_1_105_c.jpeg |
+| 433 | D32F0632-5823-4395-A6CD-BB92B2D6C043_1_105_c.jpeg |
+| 434 | D338FED1-8373-43FA-8149-3A8E04ECCAE7_1_105_c.jpeg |
+| 435 | D3BF7672-5C4A-48FB-B074-E8EF5AC64EC2_1_105_c.jpeg |
+| 436 | D86CF277-5617-4FF0-B8D4-AF48C3479489_1_105_c.jpeg |
+| 437 | D900B9F6-C0A0-49DD-92CD-30156EA9BA64_1_105_c.jpeg |
+| 438 | DA366BE7-0783-4DAE-B423-CB63F31127DE_1_105_c.jpeg |
+| 439 | DB8F02AD-538E-439A-B5A9-3057A09714FA_1_105_c.jpeg |
+| 441 | E08A39E8-C1CA-4DCD-877A-36FC623DBEB7_1_105_c.jpeg |
+| 442 | EE5DFCCB-29CD-47E8-B0DD-85FFEFE79BB1_1_105_c.jpeg |
+| 444 | FBA29E0E-ABFB-4AB8-999C-448B4DF99DBD_1_105_c.jpeg |
+| 445 | FF3FEDF0-7AE6-4E3C-ADE1-A79BA24C372C_1_105_c.jpeg |
+| 446 | Foto 01.08.23, 11 38 29.jpg |
+| 447 | Foto 01.08.23, 11 40 54.jpg |
+| 448 | Foto 01.08.23, 11 43 42.jpg |
+| 449 | Foto 01.08.23, 11 43 50.jpg |
+| 450 | Foto 01.08.23, 11 45 17.jpg |
+| 451 | Foto 01.08.23, 11 49 44.jpg |
+| 452 | Foto 01.08.23, 11 54 50.jpg |
+| 453 | Foto 01.08.23, 12 04 22.jpg |
+| 454 | Foto 01.08.23, 12 04 49.jpg |
+| 455 | Foto 01.08.23, 12 06 23.jpg |
+| 456 | Foto 01.08.23, 12 07 04.jpg |
+| 457 | Foto 01.08.23, 12 07 09.jpg |
+| 458 | Foto 01.08.23, 12 07 13.jpg |
+| 459 | Foto 01.08.23, 12 07 17.jpg |
+| 460 | Foto 01.08.23, 12 07 22.jpg |
+| 461 | Foto 01.08.23, 12 23 34.jpg |
+| 462 | Foto 01.08.23, 13 10 29.jpg |
+| 463 | Foto 01.08.23, 13 10 51.jpg |
+| 464 | Foto 01.08.23, 13 13 35.jpg |
+| 465 | Foto 01.08.23, 13 14 27.jpg |
+| 466 | Foto 01.08.23, 13 18 05.jpg |
+| 467 | Foto 01.08.23, 13 24 49.jpg |
+| 468 | Foto 01.08.23, 13 25 55.jpg |
+| 469 | Foto 01.08.23, 13 26 42.jpg |
+| 470 | Foto 01.08.23, 13 26 46.jpg |
+| 471 | Foto 01.08.23, 13 26 47.jpg |
+| 472 | Foto 01.08.23, 13 26 58.jpg |
+| 473 | Foto 01.08.23, 13 27 07.jpg |
+| 474 | Foto 01.08.23, 13 27 10.jpg |
+| 475 | Foto 01.08.23, 13 28 15.jpg |
+| 476 | Foto 01.08.23, 13 28 38.jpg |
+| 477 | Foto 01.08.23, 13 29 14.jpg |
+| 478 | Foto 01.08.23, 13 29 50.jpg |
+| 479 | Foto 01.08.23, 13 29 53.jpg |
+| 480 | Foto 01.08.23, 13 30 14.jpg |
+| 481 | Foto 01.08.23, 13 30 16.jpg |
+| 482 | Foto 01.08.23, 13 30 17.jpg |
+| 483 | Foto 01.08.23, 13 30 23.jpg |
+| 484 | Foto 01.08.23, 13 30 36.jpg |
+| 485 | Foto 01.08.23, 13 30 38.jpg |
+| 486 | Foto 01.08.23, 13 30 39.jpg |
+| 487 | Foto 01.08.23, 13 31 07.jpg |
+| 488 | Foto 01.08.23, 13 31 20.jpg |
+| 489 | Foto 01.08.23, 13 31 41.jpg |
+| 490 | Foto 01.08.23, 13 32 12.jpg |
+| 491 | Foto 01.08.23, 13 32 17.jpg |
+| 492 | Foto 01.08.23, 13 34 56.jpg |
+| 493 | Foto 01.08.23, 13 35 01.jpg |
+| 494 | Foto 01.08.23, 13 35 17.jpg |
+| 495 | Foto 01.08.23, 13 37 53.jpg |
+| 496 | Foto 14.04.23, 09 40 05.jpg |
+| 497 | Foto 16.07.23, 12 12 00.jpg |
+| 498 | Foto 16.07.23, 12 19 28.jpg |
+| 499 | Foto 16.07.23, 12 27 26.jpg |
+| 500 | Foto 19.05.23, 14 39 35.jpg |
+| 501 | Foto 19.05.23, 14 53 03.jpg |
+| 502 | Foto 19.05.23, 14 58 09.jpg |
+| 503 | Foto 19.05.23, 15 01 28.jpg |
+| 504 | Foto 21.04.23, 13 30 29.jpg |
+| 509 | IMG_20220722_144025.jpg |
+| 510 | IMG_20221007_133137_hdr.jpg |
+| 511 | IMG_20230331_124632(1).jpg |
+| 518 | IMG_20230930_161531(1).jpg |
+| 519 | IMG_20231012_154950_hdr.jpg |
+| 533 | IMG_6035.jpeg |
+| 541 | IMG_6291.jpeg |
+| 542 | IMG_6294.jpeg |
+| 603 | Rüttenscheid3.jpg |
+| 604 | Typography_636387AC-27D9-49D1-87BD-684DCAD82FC7_1_105_c.jpeg |
+
+**Total: 141 geolocated images** in the Duisburg dataset.",
+2026-10-20T16:04:58+00:00,Evolomero,geolocated_images,qwen3-coder-next,OK,13.923,5,28206,1944,30150,4,mcp_Evolomero__query_knowledge_graph; mcp_Evolomero__query_knowledge_graph; mcp_Evolomero__query_knowledge_graph; mcp_Evolomero__query_knowledge_graph,4,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT DISTINCT ?image_id ?image_name WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name ; dcterms:hasPart ?image . FILTER(LCASE(STR(?dataset_name)) = ""duisburg"") ?image a core:Image ; dc:identifier ?image_id ; rdfs:label ?image_name ; geo:hasGeometry ?geometry . } || PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?dataset_name WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name . FILTER(LCASE(STR(?dataset_name)) = ""duisburg"") } || PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT DISTINCT ?image_id ?image_name WHERE { ?dataset rdfs:label ?dataset_name . FILTER(LCASE(STR(?dataset_name)) = ""duisburg"") ?dataset dcterms:hasPart ?image . ?image a core:Image ; dc:identifier ?image_id ; rdfs:label ?image_name . ?image geo:hasGeometry ?geometry . } || PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT DISTINCT ?image_id ?image_name WHERE { ?dataset rdfs:label ?dataset_name . FILTER(LCASE(STR(?dataset_name)) = ""duisburg"") ?dataset dcterms:hasPart ?image . ?image a core:Image ; dc:identifier ?image_id ; rdfs:label ?image_name ; geo:hasGeometry ?geometry . }","I've found the geolocated images that belong to the Duisburg dataset. Here are their image IDs and names:
+
+## Geolocated Images in the Duisburg Dataset
+
+There are **141 geolocated images** in the Duisburg dataset. Due to the large number, I'll list the first 20 results:
+
+| Image ID | Image Name |
+|----------|------------|
+| 351 | 00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg |
+| 352 | 017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg |
+| 353 | 04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg |
+| 354 | 0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg |
+| 355 | 0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg |
+| 356 | 0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg |
+| 357 | 100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg |
+| 358 | 11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg |
+| 359 | 1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg |
+| 360 | 19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg |
+| 361 | 19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg |
+| 362 | 1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg |
+| 363 | 1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg |
+| 364 | 1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg |
+| 381 | 2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg |
+| 382 | 2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg |
+| 383 | 30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg |
+| 384 | 30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg |
+| 385 | 34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg |
+| 386 | 3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg |
+
+The complete list contains 141 images with image IDs ranging from 351 to 604. All of these images have geolocation information attached to them (they have geometry data).",
+2026-10-20T16:04:58+00:00,Evolomero,geolocated_images,qwen3.6-35b-a3b,OK,25.519,2,8595,2933,11528,1,mcp_Evolomero__query_knowledge_graph,1,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT DISTINCT ?image_id ?image_name WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name . FILTER(LCASE(STR(?dataset_name)) = LCASE(""Duisburg"")) ?dataset dcterms:hasPart ?image . ?image a core:Image ; dc:identifier ?image_id ; rdfs:label ?image_name . ?image geo:hasGeometry ?geometry . } LIMIT 20","
+
+Here are the geolocated images belonging to the Duisburg dataset (showing the first 20 results due to default query limits):
+
+| Image ID | Image Name |
+|----------|------------|
+| 351 | 00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg |
+| 352 | 017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg |
+| 353 | 04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg |
+| 354 | 0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg |
+| 355 | 0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg |
+| 356 | 0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg |
+| 357 | 100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg |
+| 358 | 11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg |
+| 359 | 1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg |
+| 360 | 19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg |
+| 361 | 19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg |
+| 362 | 1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg |
+| 363 | 1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg |
+| 364 | 1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg |
+| 381 | 2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg |
+| 382 | 2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg |
+| 383 | 30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg |
+| 384 | 30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg |
+| 385 | 34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg |
+| 386 | 3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg |
+
+*Note: Only the first 20 matching results are displayed. Let me know if you need the complete list.*",
+2026-10-20T16:04:58+00:00,Evolomero,geolocated_counts,qwen3.5-397b-a17b,OK,20.829,2,6171,847,7018,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT ?dataset ?dataset_name ?dataset_id (COUNT(DISTINCT ?image) AS ?geolocated_image_count) WHERE { ?dataset a core:Dataset ; dcterms:hasPart ?image ; rdfs:label ?dataset_name ; dc:identifier ?dataset_id . ?image a core:Image ; geo:hasGeometry ?geometry . } GROUP BY ?dataset ?dataset_name ?dataset_id ORDER BY ?dataset_name,"
+
+Based on the query results, there are **3 datasets** that contain geolocated images in the Evolomero OMERO repository:
+
+| Dataset Name | Dataset ID | Geolocated Images |
+|--------------|------------|-------------------|
+| check2 | 107 | 3 |
+| dataset1 | 105 | 2 |
+| Duisburg | 151 | 141 |
+
+The ""Duisburg"" dataset contains the majority of geolocated images (141), while ""check2"" and ""dataset1"" contain 3 and 2 geolocated images respectively.",
+2026-10-20T16:04:58+00:00,Evolomero,geolocated_counts,qwen3-coder-next,FAILED,18.608,,,,,,,,,,,InternalServerError: Error code: 500
+2026-10-20T16:04:58+00:00,Evolomero,geolocated_counts,qwen3.6-35b-a3b,OK,35.033,2,7106,2011,9117,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?dataset_name (COUNT(DISTINCT ?image) AS ?geolocated_image_count) WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name ; dcterms:hasPart ?image . ?image a core:Image ; geo:hasGeometry ?geometry . } GROUP BY ?dataset ?dataset_name ORDER BY DESC(?geolocated_image_count),"
+
+Based on the knowledge graph, the following datasets contain geolocated images:
+
+| Dataset Name | Number of Geolocated Images |
+|--------------|-----------------------------|
+| Duisburg     | 141                         |
+| check2       | 3                           |
+| dataset1     | 2                           |
+
+In total, there are **3 datasets** containing a combined **146 geolocated images**.",
+2026-10-20T16:27:25+00:00,Evolomero,geolocated_images,qwen3.5-397b-a17b,OK,22.159,2,21078,1857,22935,1,mcp_Evolomero__query_knowledge_graph,1,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT DISTINCT ?image_id ?image_name WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name ; dcterms:hasPart ?image . ?image a core:Image ; dc:identifier ?image_id ; rdfs:label ?image_name ; geo:hasGeometry ?geometry . FILTER(LCASE(STR(?dataset_name)) = LCASE(""Duisburg"")) }","
+
+The query found **141 geolocated images** in the Duisburg dataset. Here are the first 20 results (image IDs and names):
+
+| Image ID | Image Name |
+|----------|------------|
+| 351 | 00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg |
+| 352 | 017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg |
+| 353 | 04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg |
+| 354 | 0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg |
+| 355 | 0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg |
+| 356 | 0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg |
+| 357 | 100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg |
+| 358 | 11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg |
+| 359 | 1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg |
+| 360 | 19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg |
+| 361 | 19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg |
+| 362 | 1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg |
+| 363 | 1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg |
+| 364 | 1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg |
+| 381 | 2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg |
+| 382 | 2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg |
+| 383 | 30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg |
+| 384 | 30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg |
+| 385 | 34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg |
+| 386 | 3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg |
+
+**Note:** This shows only the first 20 of 141 total geolocated images. The complete set includes images with IDs ranging from 351 to 604, with various naming patterns including UUID-based filenames, dated photos (e.g., ""Foto 01.08.23...""), and location-based names (e.g., ""Am Porschepl.jpg"", ""Bochold1.jpg"", ""Rüttenscheid3.jpg"").",
+2026-10-20T16:27:25+00:00,Evolomero,geolocated_images,qwen3-coder-next,FAILED,0.039,,,,,,,,,,,InternalServerError: Error code: 500
+2026-10-20T16:27:25+00:00,Evolomero,geolocated_images,qwen3.6-35b-a3b,OK,36.659,2,9259,3021,12280,1,mcp_Evolomero__query_knowledge_graph,1,,"PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT DISTINCT ?image_id ?image_name WHERE { ?dataset a core:Dataset ; rdfs:label ?dataset_name ; dcterms:hasPart ?image . ?image a core:Image ; dc:identifier ?image_id ; rdfs:label ?image_name . ?image geo:hasGeometry ?geometry . ?geometry geo:asWKT ?wkt . FILTER(LCASE(STR(?dataset_name)) = LCASE(""Duisburg"")) } LIMIT 20","
+
+Here are the geolocated images belonging to the **Duisburg** dataset. Note that only the first 20 matching results are shown:
+
+| Image ID | Image Name |
+|:--------:|:-----------|
+| 351 | `00E76039-D7CD-4AEE-9ED5-E0F0D87BD476_1_105_c.jpeg` |
+| 352 | `017F0945-2010-46E0-B71A-E079612B22F5_1_105_c.jpeg` |
+| 353 | `04C9544E-FCBA-4441-AAFF-CB9057BA1CF4_1_105_c.jpeg` |
+| 354 | `0BD632C2-015F-4ED4-B5C4-030D57F7F7C3_1_105_c.jpeg` |
+| 355 | `0EC73E78-19D1-4AF4-9F29-56413A96EE15_1_105_c.jpeg` |
+| 356 | `0F984416-1B8E-4EED-9B00-147A385DCF31_1_105_c.jpeg` |
+| 357 | `100710C7-12F5-4DAF-B31F-8421795E12E9_1_105_c.jpeg` |
+| 358 | `11B2F17B-EEC2-47C3-BD37-30F8F18C592B_1_105_c.jpeg` |
+| 359 | `1756B717-8FFE-41DB-B094-050332ED9C05_1_105_c.jpeg` |
+| 360 | `19A47835-76D1-4DF5-9BF1-8465E41C8603_1_105_c.jpeg` |
+| 361 | `19B18533-BEF0-40BE-B157-E8FEB69A7AA3_1_105_c (1).jpeg` |
+| 362 | `1B8BCB09-A91B-4CED-8271-F194EE517C86_1_105_c.jpeg` |
+| 363 | `1EF84CB8-3D6E-4A14-AF5C-87FDAA2DCCB7_1_105_c.jpeg` |
+| 364 | `1FA841DA-E0F6-4F6D-89C1-2A7156A46014_1_105_c.jpeg` |
+| 381 | `2C88840F-8513-49A6-A2E9-14EA7942C6A6_1_105_c.jpeg` |
+| 382 | `2CABAFED-D649-4B02-9A67-6E397DDE6ACB_1_105_c.jpeg` |
+| 383 | `30028F7E-D82B-47E3-99ED-3A4F316FB6CD_1_105_c.jpeg` |
+| 384 | `30A9F17D-7ECF-4314-8D23-9558008BC5B3_1_105_c.jpeg` |
+| 385 | `34307340-7A9A-43BD-9C4D-D7796F1A6266_1_105_c.jpeg` |
+| 386 | `3494A337-82D8-4AC1-9E9D-831C26E0C047_1_105_c.jpeg` |
+
+Let me know if you'd like to retrieve the remaining images or need additional metadata (e.g., coordinates, acquisition dates).",
+2026-10-20T16:27:25+00:00,Evolomero,geolocated_counts,qwen3.5-397b-a17b,OK,16.346,2,6090,919,7009,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT ?dataset_id ?dataset_name (COUNT(DISTINCT ?image) AS ?geolocated_image_count) WHERE { ?image a core:Image ; geo:hasGeometry ?geometry ; dcterms:isPartOf ?dataset . ?dataset a core:Dataset ; dc:identifier ?dataset_id ; rdfs:label ?dataset_name . } GROUP BY ?dataset_id ?dataset_name ORDER BY DESC(?geolocated_image_count),"
+
+Based on the query results, **3 datasets** in the repository contain geolocated images:
+
+| Dataset ID | Dataset Name | Geolocated Images |
+|------------|--------------|-------------------|
+| 151 | Duisburg | 141 |
+| 107 | check2 | 3 |
+| 105 | dataset1 | 2 |
+
+The **Duisburg** dataset (ID: 151) contains the vast majority of geolocated images with 141 images, while the **check2** and **dataset1** datasets contain 3 and 2 geolocated images respectively.",
+2026-10-20T16:27:25+00:00,Evolomero,geolocated_counts,qwen3-coder-next,OK,2.205,2,5244,257,5501,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT DISTINCT ?dataset ?dataset_name (COUNT(DISTINCT ?image) AS ?geolocated_images_count) WHERE { ?image a core:Image ; geo:hasGeometry ?geometry . ?dataset dcterms:hasPart ?image . ?dataset rdfs:label ?dataset_name . } GROUP BY ?dataset ?dataset_name,"The datasets that contain geolocated images, along with the number of geolocated images in each, are:
+
+- **dataset1**: 2 geolocated images  
+- **check2**: 3 geolocated images  
+- **Duisburg**: 141 geolocated images",
+2026-10-20T16:27:25+00:00,Evolomero,geolocated_counts,qwen3.6-35b-a3b,OK,8.743,2,6265,1241,7506,1,mcp_Evolomero__query_knowledge_graph,1,,PREFIX core: <https://ld.openmicroscopy.org/core/> PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?dataset ?dataset_name (COUNT(DISTINCT ?image) AS ?count) WHERE { ?dataset a core:Dataset . ?dataset dcterms:hasPart ?image . ?image a core:Image . ?image geo:hasGeometry ?geometry . OPTIONAL { ?dataset rdfs:label ?dataset_name } } GROUP BY ?dataset ?dataset_name,"
+
+Based on the knowledge graph, there are **3 datasets** that contain geolocated images. Here is the breakdown by dataset:
+
+| Dataset Name | OMERO ID | Number of Geolocated Images |
+|--------------|----------|-----------------------------|
+| dataset1     | 105      | 2                           |
+| check2       | 107      | 3                           |
+| Duisburg     | 151      | 141                         |
+
+These counts represent the distinct geolocated images (`core:Image` resources with a `geo:hasGeometry` link) contained within each dataset.",

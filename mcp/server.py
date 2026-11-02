@@ -32,6 +32,7 @@ The MCP server uses Streamable HTTP transport.
 import asyncio
 import os
 import re
+from pathlib import Path
 
 import httpx
 import uvicorn
@@ -79,6 +80,40 @@ QLEVER_URL = os.getenv(
 mcp = MCPServer(
     "OMERO MCP"
 )
+
+# ---------------------------------------------------------------------------
+# MCP Resources: Knowledge Graph schema
+# ---------------------------------------------------------------------------
+
+KG_SCHEMA_FILE = (
+    Path(__file__).resolve().parent
+    / "prompts"
+    / "omero_kg_schema.txt"
+)
+
+@mcp.resource(
+    "omero://schema/full",
+    name="OMERO Knowledge Graph schema",
+    description="Complete RDF schema for generating SPARQL queries.",
+    mime_type="text/plain",
+)
+def get_kg_schema() -> str:
+    """Return the complete OMERO Knowledge Graph schema."""
+    return KG_SCHEMA_FILE.read_text(encoding="utf-8")
+
+#----------------------------------------------------------------------------
+@mcp.resource(
+    "omero://schema/geolocation",
+    name="OMERO geolocation schema",
+    description="RDF properties for querying geolocated OMERO images.",
+    mime_type="text/plain",
+)
+def get_geolocation_schema() -> str:
+    return (
+        Path(__file__).resolve().parent
+        / "prompts"
+        / "omero_kg_geolocation.txt"
+    ).read_text(encoding="utf-8")
 
 # ---------------------------------------------------------------------------
 # Native OMERO API tools

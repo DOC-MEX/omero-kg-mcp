@@ -1,0 +1,30 @@
+SPARQL KNOWLEDGE GRAPH SCHEMA — GEOLOCATION
+
+Use only the classes and properties described below.
+Do not invent predicates or classes.
+
+PREFIX core: <https://ld.openmicroscopy.org/core/>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+
+GEOLOCATION
+
+A geolocated image has a GeoSPARQL geometry:
+
+?image a core:Image ;
+       geo:hasGeometry ?geometry .
+
+The geometry can contain WKT:
+
+?geometry a geo:Geometry ;
+          geo:asWKT ?wkt .
+
+Equivalent property path:
+
+?image geo:hasGeometry/geo:asWKT ?wkt .
+
+COMMON IMAGE METADATA
+
+?image dc:identifier ?id .
+?image rdfs:label ?name .

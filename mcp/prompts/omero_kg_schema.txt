@@ -1,0 +1,254 @@
+SPARQL KNOWLEDGE GRAPH SCHEMA
+
+Use only the classes and properties described below. Do not invent
+predicates or classes.
+
+
+PREFIXES
+
+PREFIX core: <https://ld.openmicroscopy.org/core/>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+PREFIX this: <https://ld.openmicroscopy.org/omekg#>
+PREFIX omekg: <https://ld.openmicroscopy.org/omekg/>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+
+
+CORE RESOURCE TYPES
+
+The graph can contain:
+
+core:Image
+core:Dataset
+core:Project
+core:Experimenter
+core:ExperimenterGroup
+core:MapAnnotation
+core:Plate
+core:Well
+core:WellSample
+core:PlateAcquisition
+core:Screen
+core:ROI
+core:Channel
+core:Pixels
+core:Reagent
+geo:Geometry
+omekg:OMEROServer
+
+
+COMMON RESOURCE METADATA
+
+Numeric OMERO identifier:
+
+?resource dc:identifier ?id .
+
+Name, where mapped:
+
+?resource rdfs:label ?name .
+
+Description, where mapped:
+
+?resource rdfs:comment ?description .
+
+Owner:
+
+?resource core:experimenter ?experimenter .
+
+Experimenter group:
+
+?resource core:experimenter_group ?group .
+
+
+PROJECT, DATASET, AND IMAGE HIERARCHY
+
+Project to Dataset:
+
+?project a core:Project ;
+         dcterms:hasPart ?dataset .
+
+Dataset to Project:
+
+?dataset dcterms:isPartOf ?project .
+
+Dataset to Image:
+
+?dataset a core:Dataset ;
+         dcterms:hasPart ?image .
+
+Image to Dataset:
+
+?image dcterms:isPartOf ?dataset .
+
+
+IMAGE METADATA
+
+Image name:
+
+?image a core:Image ;
+       rdfs:label ?image_name .
+
+Image acquisition date:
+
+?image this:acquisition_date ?acquisition_date .
+
+Image thumbnail:
+
+?image this:thumbnail ?thumbnail .
+
+Tag value attached directly by the mapping:
+
+?image this:tag_annotation_value ?tag .
+
+Dataset tags are also available as:
+
+?dataset this:tag_annotation_value ?tag .
+
+
+GEOLOCATION
+
+A geolocated image has a GeoSPARQL geometry:
+
+?image a core:Image ;
+       geo:hasGeometry ?geometry .
+
+The geometry can contain WKT:
+
+?geometry a geo:Geometry ;
+          geo:asWKT ?wkt .
+
+Equivalent property path:
+
+?image geo:hasGeometry/geo:asWKT ?wkt .
+
+
+MAPANNOTATIONS
+
+An image MapAnnotation is represented as:
+
+?image core:hasAnnotation ?annotation .
+
+?annotation a core:MapAnnotation ;
+            dc:identifier ?annotation_id ;
+            core:mapEntry ?entry .
+
+Each MapAnnotation entry contains a key and value:
+
+?entry core:key ?key ;
+       core:value ?value .
+
+MapAnnotations can also be linked to Project, Dataset, Plate, Screen,
+Well, Reagent, and PlateAcquisition resources using core:hasAnnotation.
+
+
+EXPERIMENTERS AND GROUPS
+
+Experimenter identifier:
+
+?experimenter a core:Experimenter ;
+              dc:identifier ?experimenter_id .
+
+Experimenter fields can include:
+
+?experimenter vcard:given-name ?given_name .
+?experimenter vcard:family-name ?family_name .
+?experimenter vcard:additional-name ?middle_name .
+?experimenter vcard:hasEmail ?email .
+?experimenter vcard:organization-name ?institution .
+
+Experimenter membership in a group:
+
+?experimenter core:experimenter_group ?group .
+
+Experimenter groups can have:
+
+?group a core:ExperimenterGroup ;
+       dc:identifier ?group_id ;
+       rdfs:label ?group_name .
+
+
+PLATES, WELLS, AND WELL SAMPLES
+
+Plate to Well:
+
+?plate a core:Plate ;
+       dcterms:hasPart ?well .
+
+Well to WellSample:
+
+?well a core:Well ;
+      dcterms:hasPart ?well_sample .
+
+A WellSample can refer to an Image:
+
+?well_sample a core:WellSample ;
+             dcterms:relation ?image .
+
+A PlateAcquisition can contain WellSamples:
+
+?plate_acquisition a core:PlateAcquisition ;
+                   dcterms:hasPart ?well_sample .
+
+Screen and Plate are related using dcterms:relation:
+
+?screen a core:Screen ;
+        dcterms:relation ?plate .
+
+?plate dcterms:relation ?screen .
+
+A Well can reference a Reagent:
+
+?well core:reagent ?reagent .
+
+A WellSample can have:
+
+?well_sample core:well_index ?well_index .
+
+
+PIXELS, CHANNELS, AND ROIS
+
+Pixels belong to an Image:
+
+?pixels a core:Pixels ;
+        dcterms:isPartOf ?image .
+
+Physical pixel sizes are represented through:
+
+?pixels core:physical_size_x ?physical_size_x .
+?pixels core:physical_size_y ?physical_size_y .
+?pixels core:physical_size_z ?physical_size_z .
+
+The physical-size nodes can contain:
+
+?physical_size this:value ?value ;
+               this:unit ?unit .
+
+A Channel is related to Pixels using:
+
+?channel a core:Channel ;
+         dcterms:relation ?pixels .
+
+Channel RGB values can be represented with:
+
+?channel this:red ?red ;
+         this:green ?green ;
+         this:blue ?blue .
+
+An ROI references an Image using:
+
+?roi a core:ROI ;
+     core:image ?image .
+
+
+OMERO SERVER
+
+An OMERO server is represented as:
+
+?server a omekg:OMEROServer .
+
+The server can contain Projects, Datasets, and Images using:
+
+?server dcterms:hasPart ?resource .

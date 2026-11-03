@@ -1,0 +1,82 @@
+SPARQL KNOWLEDGE GRAPH SCHEMA — PIXELS, CHANNELS AND ROIS
+
+Use only the classes and properties described below. Do not invent
+predicates or classes.
+
+PREFIXES
+
+PREFIX core: <https://ld.openmicroscopy.org/core/>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX this: <https://ld.openmicroscopy.org/omekg#>
+
+CORE RESOURCE TYPES
+
+core:Image
+core:Pixels
+core:Channel
+core:ROI
+
+COMMON RESOURCE METADATA
+
+Numeric OMERO identifier:
+
+?resource dc:identifier ?id .
+
+Name, where mapped:
+
+?resource rdfs:label ?name .
+
+Description, where mapped:
+
+?resource rdfs:comment ?description .
+
+Owner:
+
+?resource core:experimenter ?experimenter .
+
+Experimenter group:
+
+?resource core:experimenter_group ?group .
+
+IMAGE METADATA
+
+Image name:
+
+?image a core:Image ;
+       rdfs:label ?image_name .
+
+PIXELS, CHANNELS, AND ROIS
+
+Pixels belong to an Image:
+
+?pixels a core:Pixels ;
+        dcterms:isPartOf ?image .
+
+Physical pixel sizes are represented through:
+
+?pixels core:physical_size_x ?physical_size_x .
+?pixels core:physical_size_y ?physical_size_y .
+?pixels core:physical_size_z ?physical_size_z .
+
+The physical-size nodes can contain:
+
+?physical_size this:value ?value ;
+               this:unit ?unit .
+
+A Channel is related to Pixels using:
+
+?channel a core:Channel ;
+         dcterms:relation ?pixels .
+
+Channel RGB values can be represented with:
+
+?channel this:red ?red ;
+         this:green ?green ;
+         this:blue ?blue .
+
+An ROI references an Image using:
+
+?roi a core:ROI ;
+     core:image ?image .

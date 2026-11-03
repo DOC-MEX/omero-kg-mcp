@@ -102,6 +102,8 @@ def get_kg_schema() -> str:
     return KG_SCHEMA_FILE.read_text(encoding="utf-8")
 
 #----------------------------------------------------------------------------
+# MCP Resource: OMERO geolocation schema
+
 @mcp.resource(
     "omero://schema/geolocation",
     name="OMERO geolocation schema",
@@ -114,6 +116,49 @@ def get_geolocation_schema() -> str:
         / "prompts"
         / "omero_kg_geolocation.txt"
     ).read_text(encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
+# MCP Resource: Project, Dataset and Images 
+# ---------------------------------------------------------------------------
+
+@mcp.resource(
+    "omero://schema/hierarchy",
+    name="OMERO hierarchy and image metadata schema",
+    description=(
+        "RDF schema for Projects, Datasets, Images, "
+        "resource metadata, acquisition dates, and tags."
+    ),
+    mime_type="text/plain",
+)
+def get_hierarchy_schema() -> str:
+    return (
+        Path(__file__).resolve().parent
+        / "prompts"
+        / "omero_kg_hierarchy.txt"
+    ).read_text(encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
+# MCP Resource: Pixels, Channels and ROIs
+# ---------------------------------------------------------------------------
+
+@mcp.resource(
+    "omero://schema/imaging",
+    name="OMERO pixels, channels and ROI schema",
+    description=(
+        "RDF schema for image pixel sizes, physical units, "
+        "channels, RGB values, and ROIs."
+    ),
+    mime_type="text/plain",
+)
+def get_imaging_schema() -> str:
+    return (
+        Path(__file__).resolve().parent
+        / "prompts"
+        / "omero_kg_imaging.txt"
+    ).read_text(encoding="utf-8")
+
 
 # ---------------------------------------------------------------------------
 # Native OMERO API tools

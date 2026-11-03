@@ -1,0 +1,85 @@
+SPARQL KNOWLEDGE GRAPH SCHEMA — HIERARCHY AND IMAGE METADATA
+
+Use only the classes and properties described below. Do not invent
+predicates or classes.
+
+PREFIXES
+
+PREFIX core: <https://ld.openmicroscopy.org/core/>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX this: <https://ld.openmicroscopy.org/omekg#>
+
+CORE RESOURCE TYPES
+
+core:Project
+core:Dataset
+core:Image
+core:Experimenter
+core:ExperimenterGroup
+
+COMMON RESOURCE METADATA
+
+Numeric OMERO identifier:
+
+?resource dc:identifier ?id .
+
+Name, where mapped:
+
+?resource rdfs:label ?name .
+
+Description, where mapped:
+
+?resource rdfs:comment ?description .
+
+Owner:
+
+?resource core:experimenter ?experimenter .
+
+Experimenter group:
+
+?resource core:experimenter_group ?group .
+
+PROJECT, DATASET, AND IMAGE HIERARCHY
+
+Project to Dataset:
+
+?project a core:Project ;
+         dcterms:hasPart ?dataset .
+
+Dataset to Project:
+
+?dataset dcterms:isPartOf ?project .
+
+Dataset to Image:
+
+?dataset a core:Dataset ;
+         dcterms:hasPart ?image .
+
+Image to Dataset:
+
+?image dcterms:isPartOf ?dataset .
+
+IMAGE METADATA
+
+Image name:
+
+?image a core:Image ;
+       rdfs:label ?image_name .
+
+Image acquisition date:
+
+?image this:acquisition_date ?acquisition_date .
+
+Image thumbnail:
+
+?image this:thumbnail ?thumbnail .
+
+Tag value attached directly by the mapping:
+
+?image this:tag_annotation_value ?tag .
+
+Dataset tags are also available as:
+
+?dataset this:tag_annotation_value ?tag .

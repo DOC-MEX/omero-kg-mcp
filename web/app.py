@@ -1,4 +1,5 @@
 import logging
+from contextlib import AsyncExitStack
 import os
 import time
 from pathlib import Path
@@ -328,24 +329,50 @@ async def ask(request: Request, question: str = Form(...),
         instructions = instructions_for_mode(mode)
         # None allows all MCP tools; standard mode hides dynamic SPARQL.
         tool_filter = STANDARD_TOOL_FILTER if mode == "standard" else None
-        async with MCPServerStreamableHttp(
-            name="Evolomero",
-            params={"url": EVOLOMERO_MCP_URL, "timeout": 30},
-            cache_tools_list=True,
-            client_session_timeout_seconds=30,
-            tool_filter=tool_filter,
-        ) as evolomero_mcp, MCPServerStreamableHttp(
-            name="NFDI4BIOIMAGE",
-            params={"url": NFDI4BIOIMAGE_MCP_URL, "timeout": 30},
-            cache_tools_list=True,
-            client_session_timeout_seconds=30,
-            tool_filter=tool_filter,
-        ) as nfdi4bioimage_mcp:
+        # Connect independently; one unavailable repository must not block the other!!
+        async with AsyncExitStack() as stack:
+            mcp_servers = []
+            available = []
+            unavailable = []
+            for name, url in (
+                ("Evolomero", EVOLOMERO_MCP_URL),
+                ("NFDI4BIOIMAGE", NFDI4BIOIMAGE_MCP_URL),
+            ):
+                try:
+                    server = MCPServerStreamableHttp(
+                        name=name,
+                        params={"url": url, "timeout": 30},
+                        cache_tools_list=True,
+                        client_session_timeout_seconds=30,
+                        tool_filter=tool_filter,
+                    )
+                    await stack.enter_async_context(server)
+                    mcp_servers.append(server)
+                    available.append(name)
+                except Exception:
+                    unavailable.append(name)
+                    logger.warning("MCP server %s unavailable: %s", name, url,
+                                   exc_info=True)
+
+            if not mcp_servers:
+                raise RuntimeError("Neither OMERO MCP server is available")
+
+            if unavailable:
+                instructions += (
+                    "\n\nREPOSITORY AVAILABILITY FOR THIS REQUEST: "
+                    "Only these repositories are connected: "
+                    + ", ".join(available)
+                    + ". Unavailable repositories: " + ", ".join(unavailable)
+                    + ". Use only connected repositories. If the question "
+                      "requires an unavailable repository, say that it could "
+                      "not be checked; do not report its resources as missing."
+                )
+
             agent = Agent(
                 name="OMERO KG Assistant",
                 model=model,
                 instructions=instructions,
-                mcp_servers=[evolomero_mcp, nfdi4bioimage_mcp],
+                mcp_servers=mcp_servers,
                 mcp_config={"include_server_in_tool_names": True},
             )
 
@@ -362,6 +389,13 @@ async def ask(request: Request, question: str = Form(...),
                 flush=True,
             )
 
+        # notify partial repository coverage 
+        answer = str(result.final_output)
+        if unavailable:
+            answer = ("Repository(s) unavailable: " + ", ".join(unavailable)
+                      + ". Only " + ", ".join(available)
+                      + " was available for this request.\n\n" + answer)
+
         usage = result.context_wrapper.usage
         calls = actual_tool_calls(result)
         logger.info(
@@ -377,7 +411,7 @@ async def ask(request: Request, question: str = Form(...),
                 question=question,
                 model=model,
                 mode=mode,
-                answer=result.final_output,
+                answer=answer,
                 elapsed_seconds=round(elapsed_seconds, 1),
                 total_tokens=usage.total_tokens,
                 tool_calls=calls,

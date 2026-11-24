@@ -1,4 +1,5 @@
 import asyncio
+import json  # For Parse the structured SPARQL error result.
 
 from mcp import ClientSession
 from mcp.client.streamable_http import streamable_http_client
@@ -8,7 +9,7 @@ from mcp.client.streamable_http import streamable_http_client
 # ------------------------------------------------------------
 
 # Local MCP endpoint:
-# MCP_URL = "http://127.0.0.1:8001/mcp"
+#MCP_URL = "http://127.0.0.1:8001/mcp"
 
 # Public Evolomero MCP endpoint:
 MCP_URL = "https://evolomero.evolbio.mpg.de/mcp"
@@ -21,6 +22,8 @@ MCP_URL = "https://evolomero.evolbio.mpg.de/mcp"
 # IDs from the Evolomero server.
 IMAGE_ID = 427
 DATASET_ID = 151
+#IMAGE_ID = 351
+#DATASET_ID = 351
 # test geographic search.
 LATITUDE = 51.48618
 LONGITUDE = 7.04247
@@ -50,6 +53,37 @@ async def main():
             print("Available tools:")
             for tool in tools.tools:
                 print(f"  - {tool.name}")
+
+            # Verify The advertised MCP Resources can  be displayed and read.
+            print("\nMCP Resources:")
+            expected_uris = {
+                "omero://schema/full",
+                "omero://schema/geolocation",
+                "omero://schema/hierarchy",
+                "omero://schema/imaging",
+            }
+            resource_failures = 0
+            resources = await session.list_resources()
+            listed_uris = {str(resource.uri) for resource in resources.resources}
+
+            for uri in sorted(expected_uris - listed_uris):
+                print(f"  MISSING: {uri}")
+                resource_failures += 1
+
+            for resource in resources.resources:
+                try:
+                    result = await session.read_resource(resource.uri)
+                    size = sum(len(getattr(item, "text", "") or
+                                   getattr(item, "blob", ""))
+                               for item in result.contents)
+                    if size:
+                        print(f"  OK: {resource.uri} ({size} characters)")
+                    else:
+                        print(f"  EMPTY: {resource.uri}")
+                        resource_failures += 1
+                except Exception as exc:
+                    print(f"  FAILED: {resource.uri} ({exc})")
+                    resource_failures += 1
 
             # ============================================================
             # Native OMERO API tools
@@ -170,6 +204,24 @@ ORDER BY DESC(?geolocated_images)
             )
 
             print(result)
+
+            # Confirm QLever parser errors reach the MCP tool response.
+            print("\n8. Invalid SPARQL query (expected error):")
+            result = await session.call_tool(
+                "query_knowledge_graph",
+                arguments={"sparql": "SELECT WHERE { ?s ?p ?o . }"},
+            )
+            error = json.loads(result.content[0].text)
+            assert error.get("success") is False, error
+            assert error.get("error_type") == "sparql_query_error", error
+            assert error.get("http_status") == 400, error
+            assert error.get("message"), error
+            assert isinstance(error.get("metadata"), dict), error
+            print(f"  OK: {error['message']}")
+            print(f"  Parser metadata: {error['metadata']}")
+
+            if resource_failures:
+                raise RuntimeError(f"{resource_failures} MCP Resource check(s) failed")
 
 
 if __name__ == "__main__":

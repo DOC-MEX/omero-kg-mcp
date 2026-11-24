@@ -440,8 +440,16 @@ async def query_knowledge_graph(
             },
         )
 
-        #  Give The agent QLever's HTTP error details for possible query repair.
+        # Give The agent QLever's HTTP error details for possible query correction.
         if response.is_error:
+            #  Extract parser message and position from QLever's JSON error.
+            try:
+                qlever_error = response.json()
+            except ValueError:
+                qlever_error = {}
+            if not isinstance(qlever_error, dict):
+                qlever_error = {}
+
             return {
                 "success": False,
                 "error_type": (
@@ -450,7 +458,9 @@ async def query_knowledge_graph(
                     else "qlever_http_error"
                 ),
                 "http_status": response.status_code,
-                "message": response.text.strip()[:2000],
+                "message": str(qlever_error.get("exception") or qlever_error.get("message")
+                               or response.text.strip())[:2000],
+                "metadata": qlever_error.get("metadata", {}),
                 "query": query,
             }
 

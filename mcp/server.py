@@ -440,7 +440,19 @@ async def query_knowledge_graph(
             },
         )
 
-        response.raise_for_status()
+        #  Give The agent QLever's HTTP error details for possible query repair.
+        if response.is_error:
+            return {
+                "success": False,
+                "error_type": (
+                    "sparql_query_error"
+                    if response.status_code == 400
+                    else "qlever_http_error"
+                ),
+                "http_status": response.status_code,
+                "message": response.text.strip()[:2000],
+                "query": query,
+            }
 
         return response.json()
 
